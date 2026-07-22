@@ -1,84 +1,88 @@
 import React, { useState } from 'react';
-import { Sparkles } from 'lucide-react';
-import { Breadcrumb } from '../components/ui/Breadcrumb';
-import { Badge } from '../components/ui/Badge';
-import { Accordion } from '../components/ui/Accordion';
-import { Input } from '../components/ui/Input';
-import { Tag } from '../components/ui/Tag';
+import { ChevronDown } from 'lucide-react';
 import { mockFAQs } from '../data/mockData';
+import type { FAQItem } from '../types';
 
 export const FAQ: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-
-  const categories = [
-    { key: 'all', label: 'Todas las preguntas' },
-    { key: 'portfolio', label: 'Servicios & Portfolio' },
-    { key: 'store', label: 'Tienda & Envíos' },
-    { key: 'contracts', label: 'Contratos & Licencias' },
-    { key: 'process', label: 'Proceso de Trabajo' },
-  ];
-
-  const filteredFaqs = mockFAQs.filter((item) => {
-    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
-    const matchesSearch =
-      item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.answer.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+  const [abiertos, setAbiertos] = useState<Record<string, boolean>>({
+    [mockFAQs[0]?.id || '1']: true,
   });
 
-  return (
-    <div className="container" style={{ paddingTop: '1rem', paddingBottom: '5rem' }}>
-      <Breadcrumb items={[{ label: 'Preguntas Frecuentes' }]} />
+  const toggle = (id: string) => {
+    setAbiertos((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
-      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <Badge variant="terracotta" icon={<Sparkles size={14} />} style={{ marginBottom: '0.75rem' }}>
-            Centro de Ayuda
-          </Badge>
-          <h1 style={{ marginBottom: '1rem' }}>Preguntas Frecuentes (FAQ)</h1>
-          <p style={{ fontSize: '1.1rem' }}>
-            Respuestas detalladas sobre servicios por encargo, compras en la tienda, licencias de autor y envíos.
+  return (
+    <div className="page-container">
+      <div className="section-wrapper" style={{ maxWidth: '880px' }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+          <span className="section-subtitle">PREGUNTAS FRECUENTES</span>
+          <h1 className="page-title">
+            DUDAS & GUÍA DE COMPRA <span style={{ color: '#C5A059' }}>✦</span>
+          </h1>
+
+          <div className="star-ornament" style={{ justifyContent: 'center', margin: '1rem 0' }}>
+            <span className="star-symbol">✦</span>
+          </div>
+
+          <p style={{ fontSize: '12px', color: '#5c5247', lineHeight: 1.8, maxWidth: '580px', margin: '0 auto' }}>
+            Encuentra información clara sobre la producción de láminas, tiempos de entrega, licencias de uso y el proceso de encargo personalizado.
           </p>
         </div>
 
-        {/* Search Input */}
-        <div style={{ marginBottom: '2rem' }}>
-          <Input
-            placeholder="Buscar por palabra clave (ej. derechos, revisiones, envíos...)"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+        {/* FAQ Accordion List */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {mockFAQs.map((faq: FAQItem) => {
+            const isOpen = !!abiertos[faq.id];
+            return (
+              <div
+                key={faq.id}
+                style={{
+                  background: '#ffffff',
+                  border: isOpen ? '1px solid #C5A059' : '1px solid rgba(197, 160, 89, 0.3)',
+                  transition: 'all 0.25s ease',
+                }}
+              >
+                <button
+                  onClick={() => toggle(faq.id)}
+                  style={{
+                    width: '100%',
+                    padding: '1.25rem 1.5rem',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                >
+                  <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', color: '#1a1510', fontWeight: 500 }}>
+                    {faq.question}
+                  </span>
+                  <ChevronDown
+                    size={18}
+                    color="#C5A059"
+                    style={{
+                      transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transition: 'transform 0.3s ease',
+                      flexShrink: 0,
+                    }}
+                  />
+                </button>
 
-        {/* Category Tags */}
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
-          {categories.map((cat) => (
-            <Tag
-              key={cat.key}
-              active={selectedCategory === cat.key}
-              onClick={() => setSelectedCategory(cat.key)}
-            >
-              {cat.label}
-            </Tag>
-          ))}
+                {isOpen && (
+                  <div style={{ padding: '0 1.5rem 1.5rem 1.5rem', borderTop: '1px solid rgba(197, 160, 89, 0.15)' }}>
+                    <p style={{ fontSize: '12px', color: '#5c5247', lineHeight: 1.8, margin: 0, paddingTop: '1rem' }}>
+                      {faq.answer}
+                    </p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
-
-        {/* Accordion FAQ List */}
-        {filteredFaqs.length > 0 ? (
-          <Accordion
-            allowMultiple
-            items={filteredFaqs.map((faq) => ({
-              id: faq.id,
-              title: faq.question,
-              content: faq.answer,
-            }))}
-          />
-        ) : (
-          <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-secondary)' }}>
-            No se encontraron preguntas que coincidan con tu búsqueda.
-          </div>
-        )}
       </div>
     </div>
   );

@@ -1,144 +1,134 @@
 import React, { useState } from 'react';
-import { Mail, MapPin, Send, Sparkles, CheckCircle } from 'lucide-react';
-import { Breadcrumb } from '../components/ui/Breadcrumb';
-import { Button } from '../components/ui/Button';
-import { Badge } from '../components/ui/Badge';
-import { Card } from '../components/ui/Card';
-import { Input } from '../components/ui/Input';
-import { Modal } from '../components/ui/Modal';
+import { Mail, MapPin, Send, CheckCircle2, Clock } from 'lucide-react';
 
 export const Contacto: React.FC = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
-  const [sentModal, setSentModal] = useState(false);
+  const [enviado, setEnviado] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSentModal(true);
+    setEnviado(true);
   };
 
   return (
-    <div className="container" style={{ paddingTop: '1rem', paddingBottom: '5rem' }}>
-      <Breadcrumb items={[{ label: 'Contacto' }]} />
+    <div className="page-container">
+      <div className="section-wrapper">
+        {/* Header */}
+        <div style={{ textAlign: 'center', maxWidth: '680px', margin: '0 auto 4rem auto' }}>
+          <span className="section-subtitle">CANAL DIRECTO</span>
+          <h1 className="page-title">
+            CONTACTO & ESTUDIO <span style={{ color: '#C5A059' }}>✦</span>
+          </h1>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '3rem',
-          alignItems: 'start',
-        }}
-      >
-        <div>
-          <Badge variant="terracotta" icon={<Sparkles size={14} />} style={{ marginBottom: '0.75rem' }}>
-            Hablemos
-          </Badge>
-          <h1 style={{ marginBottom: '1rem' }}>Contacto Directo con el Estudio</h1>
-          <p style={{ fontSize: '1.1rem', marginBottom: '2.5rem' }}>
-            ¿Tienes alguna consulta general, propuesta de colaboración o duda sobre la tienda? Déjanos un mensaje.
+          <div className="star-ornament" style={{ justifyContent: 'center', margin: '1rem 0' }}>
+            <span className="star-symbol">✦</span>
+          </div>
+
+          <p style={{ fontSize: '12px', color: '#5c5247', lineHeight: 1.8 }}>
+            ¿Tienes una propuesta editorial, encargo particular o consulta sobre la tienda? Estaré encantada de leerte.
           </p>
+        </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '3rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div
-                style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: 'var(--radius-md)',
-                  background: 'rgba(224, 109, 83, 0.15)',
-                  color: 'var(--accent-terracotta)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Mail size={20} />
+        {/* Main Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '3.5rem', alignItems: 'start' }}>
+          {/* Info Side */}
+          <div style={{ background: '#ffffff', border: '1px solid rgba(197, 160, 89, 0.35)', padding: '2.5rem' }}>
+            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', color: '#1a1510', marginBottom: '1.5rem' }}>
+              Informaciones del Estudio <span style={{ color: '#C5A059' }}>✦</span>
+            </h3>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+              <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
+                <Mail size={20} color="#C5A059" style={{ flexShrink: 0, marginTop: '2px' }} />
+                <div>
+                  <span style={{ fontSize: '9px', letterSpacing: '0.2em', color: '#8c8073', textTransform: 'uppercase', display: 'block', marginBottom: '0.25rem' }}>EMAIL DE CONTACTO</span>
+                  <a href="mailto:contacto@ilustrisimamaestra.com" style={{ fontSize: '13px', color: '#1a1510', fontWeight: 600 }}>
+                    contacto@ilustrisimamaestra.com
+                  </a>
+                </div>
               </div>
-              <div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Correo del estudio</div>
-                <div style={{ fontWeight: 600 }}>contacto@artisanstudio.com</div>
+
+              <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
+                <Clock size={20} color="#C5A059" style={{ flexShrink: 0, marginTop: '2px' }} />
+                <div>
+                  <span style={{ fontSize: '9px', letterSpacing: '0.2em', color: '#8c8073', textTransform: 'uppercase', display: 'block', marginBottom: '0.25rem' }}>HORARIO DE ATENCIÓN</span>
+                  <span style={{ fontSize: '12px', color: '#5c5247' }}>Lunes a Viernes: 09:00 - 18:00 (CET)</span>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
+                <MapPin size={20} color="#C5A059" style={{ flexShrink: 0, marginTop: '2px' }} />
+                <div>
+                  <span style={{ fontSize: '9px', letterSpacing: '0.2em', color: '#8c8073', textTransform: 'uppercase', display: 'block', marginBottom: '0.25rem' }}>UBICACIÓN DEL ESTUDIO</span>
+                  <span style={{ fontSize: '12px', color: '#5c5247' }}>Madrid / España (Envíos Internacionales)</span>
+                </div>
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div
-                style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: 'var(--radius-md)',
-                  background: 'rgba(217, 119, 6, 0.15)',
-                  color: 'var(--accent-amber)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <MapPin size={20} />
-              </div>
-              <div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Ubicación</div>
-                <div style={{ fontWeight: 600 }}>Barcelona / Madrid, España (Envíos Mundiales)</div>
-              </div>
+            <div style={{ marginTop: '2.5rem', borderTop: '1px solid rgba(197, 160, 89, 0.25)', paddingTop: '1.5rem' }}>
+              <span className="badge-gold">
+                ✦ DISPONIBILIDAD: ABIERTO A ENCARGOS 2026
+              </span>
             </div>
           </div>
-        </div>
 
-        {/* Contact Form */}
-        <Card glass style={{ padding: '2rem' }}>
-          <form onSubmit={handleSubmit}>
-            <Input
-              label="Nombre"
-              required
-              placeholder="Tu nombre"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            />
-            <Input
-              label="Email"
-              type="email"
-              required
-              placeholder="tuemail@dominio.com"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            />
-            <Input
-              label="Asunto"
-              required
-              placeholder="Ej. Consulta sobre láminas / Pregunta editorial"
-              value={formData.subject}
-              onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-            />
-            <div className="ui-form-group">
-              <label className="ui-form-label ui-form-label--required">Mensaje</label>
-              <textarea
-                className="ui-textarea"
-                rows={5}
-                required
-                placeholder="Escribe tu mensaje..."
-                value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              />
+          {/* Form Side */}
+          {enviado ? (
+            <div style={{ background: '#ffffff', border: '1px solid rgba(197, 160, 89, 0.5)', padding: '3.5rem', textAlign: 'center' }}>
+              <CheckCircle2 size={36} color="#C5A059" style={{ margin: '0 auto 1rem auto' }} />
+              <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.75rem', color: '#1a1510', marginBottom: '1rem' }}>
+                ¡Mensaje Enviado con Éxito! <span style={{ color: '#C5A059' }}>✦</span>
+              </h2>
+              <p style={{ fontSize: '12px', color: '#5c5247', lineHeight: 1.8, marginBottom: '2rem' }}>
+                Gracias por ponerte en contacto. Responderé a tu mensaje en el menor tiempo posible.
+              </p>
+              <button onClick={() => setEnviado(false)} className="btn-gold-primary">
+                ENVIAR OTRO MENSAJE
+              </button>
             </div>
-            <Button variant="primary" fullWidth size="lg" type="submit" rightIcon={<Send size={18} />}>
-              Enviar Mensaje
-            </Button>
-          </form>
-        </Card>
-      </div>
+          ) : (
+            <form onSubmit={handleSubmit} style={{ background: '#ffffff', border: '1px solid rgba(197, 160, 89, 0.35)', padding: '2.5rem' }}>
+              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', color: '#1a1510', marginBottom: '1.5rem' }}>
+                Formulario de Consulta <span style={{ color: '#C5A059' }}>✦</span>
+              </h3>
 
-      <Modal
-        isOpen={sentModal}
-        onClose={() => setSentModal(false)}
-        title="Mensaje Enviado"
-        footer={<Button variant="primary" fullWidth onClick={() => setSentModal(false)}>Cerrar</Button>}
-      >
-        <div style={{ textAlign: 'center', padding: '1rem 0' }}>
-          <CheckCircle size={48} color="var(--accent-emerald)" style={{ marginBottom: '1rem' }} />
-          <h3>¡Mensaje enviado con éxito!</h3>
-          <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
-            Gracias por contactar con Artisan Studio. Te responderemos lo antes posible.
-          </p>
+              <div style={{ marginBottom: '1.25rem' }}>
+                <span style={{ fontSize: '10px', letterSpacing: '0.15em', color: '#5c5247', textTransform: 'uppercase', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>Nombre</span>
+                <input
+                  type="text"
+                  required
+                  placeholder="Tu nombre completo"
+                  style={{ width: '100%', padding: '0.85rem 1rem', border: '1px solid rgba(197, 160, 89, 0.35)', fontSize: '11px', background: '#faf8f5', outline: 'none' }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '1.25rem' }}>
+                <span style={{ fontSize: '10px', letterSpacing: '0.15em', color: '#5c5247', textTransform: 'uppercase', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>Email</span>
+                <input
+                  type="email"
+                  required
+                  placeholder="tuemail@ejemplo.com"
+                  style={{ width: '100%', padding: '0.85rem 1rem', border: '1px solid rgba(197, 160, 89, 0.35)', fontSize: '11px', background: '#faf8f5', outline: 'none' }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '1.5rem' }}>
+                <span style={{ fontSize: '10px', letterSpacing: '0.15em', color: '#5c5247', textTransform: 'uppercase', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>Mensaje</span>
+                <textarea
+                  required
+                  rows={5}
+                  placeholder="Escribe aquí tu consulta o propuesta..."
+                  style={{ width: '100%', padding: '0.85rem 1rem', border: '1px solid rgba(197, 160, 89, 0.35)', fontSize: '11px', background: '#faf8f5', outline: 'none', resize: 'vertical' }}
+                />
+              </div>
+
+              <button type="submit" className="btn-gold-primary" style={{ width: '100%' }}>
+                <Send size={15} />
+                <span>ENVIAR MENSAJE</span>
+              </button>
+            </form>
+          )}
         </div>
-      </Modal>
+      </div>
     </div>
   );
 };

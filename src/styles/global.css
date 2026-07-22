@@ -18,13 +18,16 @@
   --font-sans: 'Montserrat', sans-serif;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html, body {
+html,
+body {
   background-color: var(--bg-primary);
   color: #ffffff;
   font-family: var(--font-sans);

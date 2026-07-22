@@ -1,109 +1,58 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { ShieldCheck, FileCheck, Lock, DollarSign, Scale, HelpCircle } from 'lucide-react';
-import { Breadcrumb } from '../components/ui/Breadcrumb';
-import { Button } from '../components/ui/Button';
-import { Badge } from '../components/ui/Badge';
-import { Card, CardBody } from '../components/ui/Card';
 
 export const Contrato: React.FC = () => {
   return (
-    <div className="container" style={{ paddingTop: '1rem', paddingBottom: '5rem' }}>
-      <Breadcrumb items={[{ label: 'Contrato & Términos' }]} />
+    <div className="page-container">
+      <div className="section-wrapper" style={{ maxWidth: '920px' }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+          <span className="section-subtitle">TÉRMINOS & CONDICIONES</span>
+          <h1 className="page-title">
+            MARCO LEGAL & LICENCIAS <span style={{ color: '#C5A059' }}>✦</span>
+          </h1>
 
-      <div style={{ maxWidth: '850px', margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-          <Badge variant="terracotta" icon={<ShieldCheck size={14} />} style={{ marginBottom: '0.75rem' }}>
-            Marco Legal & Transparencia
-          </Badge>
-          <h1 style={{ marginBottom: '1rem' }}>Condiciones Generales del Encargo</h1>
-          <p style={{ fontSize: '1.1rem' }}>
-            Para garantizar una relación profesional clara y protegida, todos nuestros encargos se rigen por un contrato estándar de ilustración y cesión de derechos de autor.
+          <div className="star-ornament" style={{ justifyContent: 'center', margin: '1rem 0' }}>
+            <span className="star-symbol">✦</span>
+          </div>
+
+          <p style={{ fontSize: '12px', color: '#5c5247', lineHeight: 1.8 }}>
+            Condiciones generales aplicables a los encargos de ilustración comercial, derechos de propiedad intelectual y producción.
           </p>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginBottom: '4rem' }}>
+        {/* Content Box */}
+        <div style={{ background: '#ffffff', border: '1px solid rgba(197, 160, 89, 0.35)', padding: '3rem', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
           {/* Section 1 */}
-          <Card glass style={{ padding: '1.5rem' }}>
-            <CardBody>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem', color: 'var(--accent-terracotta)' }}>
-                <Scale size={24} />
-                <h3 style={{ fontSize: '1.3rem' }}>1. Propiedad Intelectual & Derechos de Autor</h3>
-              </div>
-              <p style={{ lineHeight: '1.7', fontSize: '0.975rem', marginBottom: '1rem' }}>
-                De acuerdo con la Ley de Propiedad Intelectual, el ilustrador conserva la autoría y los derechos morales inalienables sobre las obras creadas. El cliente recibe una <strong>licencia de explotación comercial en exclusiva</strong> ajustada al ámbito, formato y plazo acordado en el contrato específico del encargo.
-              </p>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                * El ilustrador se reserva el derecho de exhibir las ilustraciones en sus portfolios profesionales, exposiciones y publicaciones promocionales del estudio.
-              </p>
-            </CardBody>
-          </Card>
+          <div>
+            <span className="badge-gold" style={{ marginBottom: '0.75rem' }}>CLÁUSULA 01</span>
+            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.35rem', color: '#1a1510', marginBottom: '0.75rem' }}>
+              Propiedad Intelectual & Derechos de Autor
+            </h3>
+            <p style={{ fontSize: '12px', color: '#5c5247', lineHeight: 1.8 }}>
+              Salvo acuerdo en contrario por escrito, Ilustrísima Maestra conserva los derechos morales de autor sobre todas las obras, ilustraciones y bocetos creados durante el encargo. El cliente adquiere la licencia de uso comercial para el ámbito, soporte y duración estipulados en el contrato específico del proyecto.
+            </p>
+          </div>
 
           {/* Section 2 */}
-          <Card glass style={{ padding: '1.5rem' }}>
-            <CardBody>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem', color: 'var(--accent-amber)' }}>
-                <DollarSign size={24} />
-                <h3 style={{ fontSize: '1.3rem' }}>2. Calendario de Pagos & Depósito</h3>
-              </div>
-              <ul style={{ lineHeight: '1.8', fontSize: '0.975rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <li><strong>Depósito Inicial (50%):</strong> Se abonará antes del inicio del trabajo para reservar la plaza en la agenda del estudio.</li>
-                <li><strong>Pago Final (50%):</strong> Se abonará tras la aprobación final del arte y con carácter previo a la entrega de los archivos maestros en alta resolución.</li>
-              </ul>
-            </CardBody>
-          </Card>
+          <div style={{ borderTop: '1px solid rgba(197, 160, 89, 0.25)', paddingTop: '2rem' }}>
+            <span className="badge-gold" style={{ marginBottom: '0.75rem' }}>CLÁUSULA 02</span>
+            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.35rem', color: '#1a1510', marginBottom: '0.75rem' }}>
+              Condiciones de Pago & Calendario de Entregas
+            </h3>
+            <p style={{ fontSize: '12px', color: '#5c5247', lineHeight: 1.8 }}>
+              Todos los proyectos requieren un pago inicial del 50% en concepto de señal para reservar la fecha en el calendario de producción. El 50% restante se abonará tras la aprobación final del boceto y previo a la entrega de los archivos finales a alta resolución.
+            </p>
+          </div>
 
           {/* Section 3 */}
-          <Card glass style={{ padding: '1.5rem' }}>
-            <CardBody>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem', color: 'var(--accent-emerald)' }}>
-                <FileCheck size={24} />
-                <h3 style={{ fontSize: '1.3rem' }}>3. Rondas de Revisión & Cambios</h3>
-              </div>
-              <p style={{ lineHeight: '1.7', fontSize: '0.975rem', marginBottom: '1rem' }}>
-                Cada proyecto incluye <strong>2 rondas de corrección en la etapa de bocetos</strong> para validar composición, personajes y elementos narrativos. Tras la aprobación del boceto, se procede al coloreado final, que incluye hasta 2 revisiones de ajustes cromáticos menores.
-              </p>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                * Cambios estructurales solicitados una vez aprobada la fase de boceto o una vez iniciado el renderizado final se tarifarán por hora de trabajo adicional (45€/h).
-              </p>
-            </CardBody>
-          </Card>
-
-          {/* Section 4 */}
-          <Card glass style={{ padding: '1.5rem' }}>
-            <CardBody>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem', color: 'var(--accent-rose)' }}>
-                <Lock size={24} />
-                <h3 style={{ fontSize: '1.3rem' }}>4. Acuerdos de Confidencialidad (NDA)</h3>
-              </div>
-              <p style={{ lineHeight: '1.7', fontSize: '0.975rem' }}>
-                Respetamos de forma absoluta la confidencialidad de lanzamientos editoriales o producciones de cine/videojuegos no anunciadas. Firmamos acuerdos NDA bajo solicitud sin coste adicional antes de revisar materiales sensibles de guión o briefing.
-              </p>
-            </CardBody>
-          </Card>
-        </div>
-
-        <div
-          style={{
-            background: 'var(--bg-secondary)',
-            borderRadius: 'var(--radius-xl)',
-            padding: '2rem',
-            textAlign: 'center',
-            border: '1px solid var(--border-dark)',
-          }}
-        >
-          <HelpCircle size={32} color="var(--accent-terracotta)" style={{ marginBottom: '0.75rem' }} />
-          <h3 style={{ marginBottom: '0.5rem' }}>¿Tienes alguna duda sobre los términos?</h3>
-          <p style={{ marginBottom: '1.5rem', fontSize: '0.95rem' }}>
-            Consúltanos cualquier cláusula específica antes de formalizar tu encargo.
-          </p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-            <Link to="/contacto">
-              <Button variant="outline">Contactar con el estudio</Button>
-            </Link>
-            <Link to="/faq">
-              <Button variant="secondary">Ir a FAQ</Button>
-            </Link>
+          <div style={{ borderTop: '1px solid rgba(197, 160, 89, 0.25)', paddingTop: '2rem' }}>
+            <span className="badge-gold" style={{ marginBottom: '0.75rem' }}>CLÁUSULA 03</span>
+            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.35rem', color: '#1a1510', marginBottom: '0.75rem' }}>
+              Política de Revisiones & Cambios
+            </h3>
+            <p style={{ fontSize: '12px', color: '#5c5247', lineHeight: 1.8 }}>
+              Cada proyecto incluye 2 rondas de revisiones gratuitas en la fase de bocetado preliminar. Cualquier modificación estructural posterior o cambio sustancial en la paleta de color una vez aprobada la fase inicial se presupuestará adicionalmente por horas de trabajo.
+            </p>
           </div>
         </div>
       </div>

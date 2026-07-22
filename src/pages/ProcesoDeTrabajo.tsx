@@ -1,148 +1,99 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Sparkles, CheckCircle2, Clock, FileText, Send, Layers } from 'lucide-react';
-import { Breadcrumb } from '../components/ui/Breadcrumb';
-import { Button } from '../components/ui/Button';
-import { Badge } from '../components/ui/Badge';
-import { Card, CardBody } from '../components/ui/Card';
-import { mockWorkflowSteps } from '../data/mockData';
+import { Lightbulb, Compass as CompassIcon, Layers, CheckCircle } from 'lucide-react';
 
 export const ProcesoDeTrabajo: React.FC = () => {
+  const pasos = [
+    {
+      num: '01',
+      titulo: 'BRIEFING & INVESTIGACIÓN',
+      icono: Lightbulb,
+      desc: 'Analizamos las necesidades narrativas, referencias estéticas, universo conceptual y objetivos finales del encargo.',
+      entregables: 'Documento Briefing + Moodboard de referencias iniciales',
+    },
+    {
+      num: '02',
+      titulo: 'BOCETADO & COMPOSICIÓN',
+      icono: CompassIcon,
+      desc: 'Desarrollo de varios bocetos de composición rápida (thumbnails) y esquemas tonales para definir el encuadre perfecto.',
+      entregables: '3 Propuestas de composición + Paleta cromática preliminar',
+    },
+    {
+      num: '03',
+      titulo: 'ILUSTRACIÓN & REFINAMIENTO',
+      icono: Layers,
+      desc: 'Ejecución detallada del trazo, volumen, texturas de pincel y pintura de luz con revisiones intermedias coordinadas.',
+      entregables: 'Arte en proceso a resolución completa para feedback',
+    },
+    {
+      num: '04',
+      titulo: 'FINALIZACIÓN & ARTE FINAL',
+      icono: CheckCircle,
+      desc: 'Optimización de color para producción de imprenta (CMYK Fine Art) o pantallas (RGB 4K/8K) con entrega de licencias.',
+      entregables: 'Archivos máster organizados + Certificado de Autenticidad',
+    },
+  ];
+
   return (
-    <div className="container" style={{ paddingTop: '1rem', paddingBottom: '5rem' }}>
-      <Breadcrumb items={[{ label: 'Proceso de Trabajo' }]} />
+    <div className="page-container">
+      <div className="section-wrapper">
+        {/* Header */}
+        <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 4rem auto' }}>
+          <span className="section-subtitle">METODOLOGÍA CREATIVA</span>
+          <h1 className="page-title">
+            PROCESO DE TRABAJO <span style={{ color: '#C5A059' }}>✦</span>
+          </h1>
 
-      <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-        <Badge variant="terracotta" icon={<Sparkles size={14} />} style={{ marginBottom: '0.75rem' }}>
-          Metodología del Estudio
-        </Badge>
-        <h1 style={{ marginBottom: '1rem' }}>Cómo Cobran Vida Tus Ilustraciones</h1>
-        <p style={{ fontSize: '1.15rem', maxWidth: '700px', margin: '0 auto' }}>
-          Un proceso transparente, colaborativo y estructurado en 4 etapas claras para garantizar que el resultado final supere tus expectativas.
-        </p>
-      </div>
+          <div className="star-ornament" style={{ justifyContent: 'center', margin: '1rem 0' }}>
+            <span className="star-symbol">✦</span>
+          </div>
 
-      {/* Timeline steps */}
-      <div style={{ maxWidth: '900px', margin: '0 auto 5rem auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-        {mockWorkflowSteps.map((step) => (
-          <Card key={step.stepNumber} glass style={{ position: 'relative', overflow: 'visible' }}>
-            <CardBody style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '2rem', alignItems: 'center' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                  <div
-                    style={{
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '50%',
-                      background: 'linear-gradient(135deg, var(--accent-terracotta) 0%, var(--accent-amber) 100%)',
-                      color: '#ffffff',
-                      fontWeight: 700,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '1.1rem',
-                    }}
-                  >
-                    0{step.stepNumber}
-                  </div>
-                  <h3 style={{ fontSize: '1.4rem' }}>{step.title}</h3>
+          <p style={{ fontSize: '12px', color: '#5c5247', lineHeight: 1.8 }}>
+            Un flujo de trabajo riguroso, colaborativo y transparente estructurado en 4 fases para garantizar resultados de la máxima calidad artística.
+          </p>
+        </div>
+
+        {/* Steps Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '4rem' }}>
+          {pasos.map((paso) => {
+            const Icono = paso.icono;
+            return (
+              <div key={paso.num} className="card-hover-gold" style={{ padding: '2rem', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#C5A059', marginBottom: '1.5rem' }}>
+                  <span style={{ fontFamily: 'var(--font-cinzel)', fontSize: '1.75rem', fontWeight: 600 }}>{paso.num}</span>
+                  <Icono size={24} />
                 </div>
 
-                <p style={{ fontSize: '1rem', lineHeight: '1.6', marginBottom: '1.25rem', color: 'var(--text-secondary)' }}>
-                  {step.description}
+                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', color: '#1a1510', marginBottom: '1rem', fontWeight: 500 }}>
+                  {paso.titulo}
+                </h3>
+
+                <p style={{ fontSize: '11px', color: '#5c5247', lineHeight: 1.7, marginBottom: '1.5rem', flex: 1 }}>
+                  {paso.desc}
                 </p>
 
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    padding: '0.4rem 0.75rem',
-                    background: 'var(--bg-primary)',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid var(--border-dark)',
-                    fontSize: '0.85rem',
-                    color: 'var(--accent-amber)',
-                  }}
-                >
-                  <Clock size={15} />
-                  <span>Duración estimada: <strong>{step.duration}</strong></span>
+                <div style={{ borderTop: '1px solid rgba(197, 160, 89, 0.25)', paddingTop: '1rem' }}>
+                  <span style={{ fontSize: '9px', letterSpacing: '0.15em', color: '#C5A059', textTransform: 'uppercase', display: 'block', marginBottom: '0.25rem', fontWeight: 600 }}>
+                    ENTREGABLES:
+                  </span>
+                  <span style={{ fontSize: '10px', color: '#1a1510', fontWeight: 500 }}>{paso.entregables}</span>
                 </div>
               </div>
-
-              {/* Deliverable Callout Box */}
-              <div
-                style={{
-                  background: 'var(--bg-primary)',
-                  border: '1px solid var(--border-dark)',
-                  borderRadius: 'var(--radius-lg)',
-                  padding: '1.5rem',
-                  borderLeft: '4px solid var(--accent-terracotta)',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
-                  <CheckCircle2 size={18} color="var(--accent-terracotta)" />
-                  <span>Entregable de esta fase</span>
-                </div>
-                <p style={{ fontSize: '0.925rem', color: 'var(--text-secondary)', margin: 0 }}>
-                  {step.deliverablesSummary}
-                </p>
-              </div>
-            </CardBody>
-          </Card>
-        ))}
-      </div>
-
-      {/* Process Guarantees */}
-      <div
-        style={{
-          background: 'var(--bg-secondary)',
-          borderRadius: 'var(--radius-2xl)',
-          padding: '3rem 2rem',
-          border: '1px solid var(--border-dark)',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          gap: '2rem',
-          marginBottom: '5rem',
-        }}
-      >
-        <div>
-          <Layers size={32} color="var(--accent-terracotta)" style={{ marginBottom: '0.75rem' }} />
-          <h4 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Revisiones Incluidas</h4>
-          <p style={{ fontSize: '0.9rem' }}>
-            Cada contrato incluye 2 rondas de revisiones estructurales en boceto y 2 rondas de ajustes de color para asegurar tu total satisfacción.
-          </p>
+            );
+          })}
         </div>
 
-        <div>
-          <FileText size={32} color="var(--accent-amber)" style={{ marginBottom: '0.75rem' }} />
-          <h4 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Licencia & Propiedad</h4>
-          <p style={{ fontSize: '0.9rem' }}>
-            Firmamos un contrato de cesión de derechos de explotación comercial con especificaciones transparentes desde el día uno.
+        {/* Bottom Callout */}
+        <div style={{ background: '#ffffff', border: '1px solid rgba(197, 160, 89, 0.35)', padding: '3rem', textAlign: 'center' }}>
+          <h3 className="section-title" style={{ fontSize: '2rem' }}>
+            ¿Listo para iniciar tu encargo? <span style={{ color: '#C5A059' }}>✦</span>
+          </h3>
+          <p style={{ fontSize: '12px', color: '#5c5247', lineHeight: 1.8, maxWidth: '540px', margin: '0 auto 2rem auto' }}>
+            Reserva tu fecha de inicio en el calendario de producción de Ilustrísima Maestra.
           </p>
-        </div>
-
-        <div>
-          <Send size={32} color="var(--accent-emerald)" style={{ marginBottom: '0.75rem' }} />
-          <h4 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Entrega puntual</h4>
-          <p style={{ fontSize: '0.9rem' }}>
-            Trabajamos con calendarios estrictos y entregas parciales para cumplir siempre los plazos de imprenta o lanzamiento.
-          </p>
-        </div>
-      </div>
-
-      <div style={{ textAlign: 'center' }}>
-        <h2 style={{ marginBottom: '1rem' }}>¿Listo para empezar tu encargo?</h2>
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link to="/portfolio/presupuesto">
-            <Button variant="primary" size="lg" rightIcon={<Send size={18} />}>
-              Solicitar Presupuesto
-            </Button>
-          </Link>
-          <Link to="/contrato">
-            <Button variant="outline" size="lg">
-              Consultar Términos del Contrato
-            </Button>
+          <Link to="/portfolio/presupuesto" className="btn-gold-primary">
+            <span>INICIAR PROYECTO</span>
+            <span>→</span>
           </Link>
         </div>
       </div>
