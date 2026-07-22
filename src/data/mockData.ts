@@ -18,7 +18,7 @@ export const mockServices: Service[] = [
       'Mockup 3D hiperrealista del libro/revista',
       'Licencia editorial comercial estándar'
     ],
-    coverImage: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1200&q=80',
+    coverImage: '/srv-editorial.png',
     iconName: 'BookOpen',
     featured: true,
     faq: [
@@ -43,7 +43,7 @@ export const mockServices: Service[] = [
       'Guía visual de color y proporciones en PDF',
       'Licencia comercial global e ilimitada'
     ],
-    coverImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
+    coverImage: '/srv-character.png',
     iconName: 'UserCheck',
     featured: true,
     faq: [
@@ -66,7 +66,7 @@ export const mockServices: Service[] = [
       'Paleta cromática y estudios de iluminación',
       'Derechos de producción y adaptación'
     ],
-    coverImage: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=1200&q=80',
+    coverImage: '/srv-environment.png',
     iconName: 'Sparkles',
     featured: true
   },
@@ -85,7 +85,7 @@ export const mockServices: Service[] = [
       'Certificado digital de autenticidad firmado',
       'Vídeo timelapse del proceso de creación (opcional)'
     ],
-    coverImage: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=1200&q=80',
+    coverImage: '/srv-props.png',
     iconName: 'Palette',
     featured: false
   }
@@ -94,68 +94,68 @@ export const mockServices: Service[] = [
 export const mockProjects: Project[] = [
   {
     id: 'proj-1',
-    slug: 'cronicas-del-bosque-etereo',
-    title: 'Crónicas del Bosque Etéreo',
-    subtitle: 'Serie de portadas e ilustraciones interiores para saga de novela fantástica',
+    slug: 'la-flor-y-la-niebla',
+    title: 'La Flor y la Niebla',
+    subtitle: 'Portada para novela de fantasía histórica. Una historia sobre recuerdos que florecen incluso entre la niebla.',
     serviceIds: ['srv-1', 'srv-3'],
-    coverImage: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1200&q=80',
-    client: 'Editorial Valhalla',
-    year: '2025',
+    coverImage: '/portfolio-hero.png',
+    client: 'Editorial Planeta',
+    year: '2023',
     software: ['Procreate', 'Adobe Photoshop', 'Clip Studio Paint'],
     role: 'Ilustrador de Portada & Artista Conceptual',
     gallery: [
-      'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=1200&q=80'
+      '/portfolio-hero.png',
+      '/srv-editorial.png',
+      '/srv-character.png'
     ],
-    description: 'Proyecto integral de diseño de cubierta para la trilogía fantástica bestseller "Crónicas del Bosque Etéreo". El desafío consistía en capturar la atmósfera mística y el contraste entre la luz dorada y las sombras del bosque ancestral.',
-    conceptText: 'Utilizando una paleta rica en verdes esmeralda, ocres borgoña y pinceladas cargadas de textura orgánica, construimos un universo reconocible instantáneamente en los estantes de las librerías.',
-    resultSummary: 'La primera edición vendió más de 25,000 ejemplares en sus primeros dos meses y fue nominada al Premio Nacional de Diseño Editorial 2025.',
+    description: 'Proyecto integral de diseño de cubierta para la novela de fantasía histórica "La flor y la niebla". El desafío consistía en capturar la atmósfera mística y el contraste entre la luz dorada y las sombras del bosque ancestral.',
+    conceptText: 'La protagonista de la historia lleva en su memoria un jardín que solo puede ver ella. La niebla representa lo que ha perdido, mientras que las flores doradas representan los recuerdos que aún la sostienen. Buscamos una atmósfera melancólica, delicada y etérea.',
+    resultSummary: 'La primera edición vendió más de 25,000 ejemplares en sus primeros dos meses y fue nominada al Premio Nacional de Diseño Editorial.',
     testimonial: {
       author: 'Elena Rostova',
       role: 'Directora de Arte',
-      company: 'Editorial Valhalla',
-      text: 'Trabajar con el estudio fue fluido, creativo e impecable. Logró transformar pasajes complejos del texto en una imagen de portada inolvidable que disparó las ventas.'
+      company: 'Editorial Planeta',
+      text: 'Trabajar con el estudio fue fluido, creativo e impecable. Logró transformar pasajes complejos del texto en una imagen de portada inolvidable.'
     },
     featured: true,
     tags: ['Fantástico', 'Editorial', 'Libros', 'Pintura Digital']
   },
   {
     id: 'proj-2',
-    slug: 'kumo-the-fox-mascot',
-    title: 'Kumo & The Urban Spirit',
-    subtitle: 'Diseño de mascota y universo visual para marca de streetwear artesanal',
-    serviceIds: ['srv-2'],
-    coverImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
-    client: 'Kumo Streetwear Tokyo',
-    year: '2024',
+    slug: 'cronicas-del-destino',
+    title: 'Crónicas del Destino',
+    subtitle: 'Ilustración interior para saga de fantasía épica',
+    serviceIds: ['srv-1', 'srv-2'],
+    coverImage: '/srv-environment.png',
+    client: 'Editorial Hidra',
+    year: '2022',
     software: ['Adobe Illustrator', 'Procreate'],
     role: 'Character Designer & Illustrator',
     gallery: [
-      'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=1200&q=80'
+      '/srv-environment.png',
+      '/srv-concept.png'
     ],
-    description: 'Desarrollo de personaje de marca basado en un Kitsune místico reinterpretado con indumentaria neo-cyberpunk.',
-    conceptText: 'Líneas limpias y expresivas adaptables tanto para serigrafía en camisetas como para animaciones cortas promocionales en redes sociales.',
-    resultSummary: 'Colección agotada en 48 horas tras el lanzamiento oficial.',
+    description: 'Ilustración interior narrativa de escenarios sagrados y templos antiguos.',
+    conceptText: 'Líneas limpias y expresivas adaptables para maquetación interior.',
+    resultSummary: 'Obra aclamada por la crítica literaria.',
     featured: true,
     tags: ['Character Design', 'Branding', 'Vector']
   },
   {
     id: 'proj-3',
-    slug: 'nebulosa-retro-keyart',
-    title: 'Nebulosa Retro-Futurista',
-    subtitle: 'Ilustración promocional Key Art para videojuego indie synthwave',
+    slug: 'el-jardin-de-los-susurros',
+    title: 'El Jardín de los Susurros',
+    subtitle: 'Ilustración editorial para revista cultural',
     serviceIds: ['srv-3'],
-    coverImage: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=1200&q=80',
-    client: 'HyperDrive Games',
-    year: '2025',
+    coverImage: '/srv-concept.png',
+    client: 'Revista Culturama',
+    year: '2023',
     software: ['Photoshop', 'Blender 3D'],
     role: 'Key Concept Artist',
     gallery: [
-      'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=1200&q=80'
+      '/srv-concept.png'
     ],
-    description: 'Arte conceptual principal utilizado para el póster de lanzamiento en Steam y campaña internacional.',
+    description: 'Arte conceptual principal utilizado para la portada de la edición especial N° 45.',
     featured: false,
     tags: ['Sci-Fi', 'Key Art', 'Videojuegos']
   }
@@ -165,16 +165,16 @@ export const mockProducts: Product[] = [
   {
     id: 'prod-1',
     slug: 'print-bosque-etereo-giclee',
-    title: 'Lámina Fine Art "Guardiana del Bosque"',
+    title: 'Lámina Fine Art "La Flor y la Niebla"',
     price: 45,
     category: 'physical-print',
     isDigital: false,
     description: 'Edición limitada de 50 impresiones Giclée firmadas y numeradas a mano. Impreso en papel Hahnemühle German Etching de 310g con tintas pigmentadas resistentes a la luz.',
     images: [
-      'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=800&q=80'
+      '/portfolio-hero.png',
+      '/srv-editorial.png'
     ],
-    coverImage: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80',
+    coverImage: '/portfolio-hero.png',
     stock: 12,
     dimensions: 'A3 (29.7 x 42 cm)',
     paperType: 'Hahnemühle 310gsm Cotton Rag',
@@ -190,9 +190,9 @@ export const mockProducts: Product[] = [
     isDigital: false,
     description: 'Libro de arte de tapa dura con 160 páginas a todo color que recopila bocetos, estudios de color y conceptos de la última década del estudio.',
     images: [
-      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80'
+      '/srv-editorial.png'
     ],
-    coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80',
+    coverImage: '/srv-editorial.png',
     stock: 25,
     dimensions: '21 x 28 cm (Hardcover)',
     featured: true,
@@ -207,9 +207,9 @@ export const mockProducts: Product[] = [
     isDigital: true,
     description: 'Set exclusivo de 35 pinceles digitales creados a partir de escaneos de alta definición de grafito tradicional, tinta china y óleo sobre lienzo.',
     images: [
-      'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'
+      '/srv-character.png'
     ],
-    coverImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
+    coverImage: '/srv-character.png',
     digitalFormat: '.brushset (compatible con Procreate 5+)',
     fileSize: '145 MB',
     featured: true,
@@ -218,15 +218,15 @@ export const mockProducts: Product[] = [
   {
     id: 'prod-4',
     slug: 'original-oil-study-astral',
-    title: 'Pintura Original "Estudio Astral N° 4"',
+    title: 'Pintura Original "El Cáliz Arcano"',
     price: 420,
     category: 'original-art',
     isDigital: false,
     description: 'Pieza única original al óleo y hoja de pan de oro sobre panel de madera de arce tratada. Firmado en el frontal y reverso.',
     images: [
-      'https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=800&q=80'
+      '/srv-props.png'
     ],
-    coverImage: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=800&q=80',
+    coverImage: '/srv-props.png',
     stock: 1,
     dimensions: '30 x 40 cm',
     featured: false,
@@ -270,7 +270,7 @@ export const mockFAQs: FAQItem[] = [
     id: 'faq-1',
     category: 'portfolio',
     question: '¿Cómo puedo solicitar un presupuesto para mi proyecto?',
-    answer: 'Puedes rellenar directamente nuestro formulario interactivo en la sección "Solicitar Presupuesto" o enviarnos un email detallado a contacto@artisanstudio.com. Te responderemos en un plazo máximo de 24 a 48 horas laborables.'
+    answer: 'Puedes rellenar directamente nuestro formulario interactivo en la sección "Solicitar Presupuesto" o enviarnos un email detallado a contacto@ilustrisimamaestra.com. Te responderemos en un plazo máximo de 24 a 48 horas laborables.'
   },
   {
     id: 'faq-2',
