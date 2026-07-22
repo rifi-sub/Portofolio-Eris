@@ -63,7 +63,7 @@ export const Home: React.FC = () => {
           </Link>
         </div>
 
-        {/* Center Brand Title - High Legibility */}
+        {/* Center Brand Title */}
         <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', top: '1.75rem', textAlign: 'center', pointerEvents: 'auto' }}>
           <h1
             style={{
@@ -86,17 +86,17 @@ export const Home: React.FC = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem', pointerEvents: 'auto' }}>
           <ul style={{ display: 'flex', gap: '2.5rem', listStyle: 'none', fontSize: '10px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#ffffff', margin: 0, padding: 0, fontWeight: 600, textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>
             <li>
-              <Link to="/sobre-mi" style={{ transition: 'color 0.3s' }} className="hover-gold-text">
+              <Link to="/sobre-mi" style={{ transition: 'color 0.3s' }}>
                 Sobre Mí
               </Link>
             </li>
             <li>
-              <Link to="/proceso-de-trabajo" style={{ transition: 'color 0.3s' }} className="hover-gold-text">
+              <Link to="/proceso-de-trabajo" style={{ transition: 'color 0.3s' }}>
                 Proceso
               </Link>
             </li>
             <li>
-              <Link to="/contacto" style={{ transition: 'color 0.3s' }} className="hover-gold-text">
+              <Link to="/contacto" style={{ transition: 'color 0.3s' }}>
                 Contacto
               </Link>
             </li>
@@ -204,16 +204,16 @@ export const Home: React.FC = () => {
                 color: '#3a3025',
                 textTransform: 'uppercase',
                 lineHeight: 2,
-                marginBottom: '2rem',
+                marginBottom: '2.5rem',
                 fontWeight: 600,
               }}
             >
               Explora mi trabajo<br />y proyectos realizados
             </p>
 
-            <Link to="/portfolio" className="btn-portfolio">
-              <span>Entrar</span>
-              <span style={{ fontSize: '12px' }}>→</span>
+            <Link to="/portfolio" className="btn-home-entry">
+              <span>ENTRAR</span>
+              <span style={{ fontSize: '13px', color: '#9A7B42' }}>→</span>
             </Link>
           </div>
         </section>
@@ -277,7 +277,7 @@ export const Home: React.FC = () => {
                 color: '#e0c896',
                 textTransform: 'uppercase',
                 lineHeight: 2,
-                marginBottom: '2rem',
+                marginBottom: '2.5rem',
                 fontWeight: 600,
                 textShadow: '0 1px 6px rgba(0, 0, 0, 0.9)',
               }}
@@ -285,9 +285,9 @@ export const Home: React.FC = () => {
               Productos ilustrados,<br />hechos con amor
             </p>
 
-            <Link to="/tienda" className="btn-tienda">
-              <span>Entrar</span>
-              <span style={{ fontSize: '12px' }}>→</span>
+            <Link to="/tienda" className="btn-home-entry-dark">
+              <span>ENTRAR</span>
+              <span style={{ fontSize: '13px', color: '#D4AF65' }}>→</span>
             </Link>
           </div>
         </section>
@@ -327,7 +327,7 @@ export const Home: React.FC = () => {
         {/* Center Philosophy & Star Arc */}
         <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', bottom: '1.75rem', textAlign: 'center' }}>
           <div style={{ fontSize: '8px', color: '#C5A059', marginBottom: '0.35rem', textShadow: '0 1px 4px rgba(0,0,0,0.9)' }}>✦</div>
-          <p style={{ fontSize: '9px', letterSpacing: '0.45em', color: '#F3D89D', textTransform: 'uppercase', margin: 0, fontWeight: 600, textShadow: '0 1px 6px rgba(0, 0, 0, 0.9)' }}>
+          <p style={{ fontSize: '9px', letterSpacing: '0.45em', color: '#F3D89D', textTransform: 'uppercase', margin: 0, fontWeight: 500, textShadow: '0 1px 6px rgba(0, 0, 0, 0.9)' }}>
             EL ARTE ES EL PUENTE<br />ENTRE MUNDOS
           </p>
         </div>
@@ -340,7 +340,7 @@ export const Home: React.FC = () => {
             </span>
             <div style={{ width: '1px', height: '40px', backgroundColor: 'rgba(197, 160, 89, 0.4)' }} />
           </div>
-          <button style={{ display: 'flex', alignItems: 'center', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(197, 160, 89, 0.4)', borderRadius: '4px', padding: '0.35rem 0.65rem', fontSize: '10px', letterSpacing: '0.25em', color: '#F3D89D', textTransform: 'uppercase', cursor: 'pointer', fontWeight: 600, backdropFilter: 'blur(4px)' }}>
+          <button style={{ display: 'flex', alignItems: 'center', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(197, 160, 89, 0.4)', borderRadius: '4px', padding: '0.35rem 0.65rem', fontSize: '10px', letterSpacing: '0.25em', color: '#F3D89D', textTransform: 'uppercase', cursor: 'pointer', fontWeight: 500, backdropFilter: 'blur(4px)' }}>
             ES
             <ChevronDown size={12} style={{ marginLeft: '0.25rem', color: '#F3D89D' }} />
           </button>
