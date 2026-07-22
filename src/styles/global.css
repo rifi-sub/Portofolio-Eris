@@ -1,0 +1,157 @@
+/* Google Fonts Import for Ilustrísima Maestra */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap');
+
+:root {
+  --color-gold: #C5A059;
+  --color-gold-light: #E5C185;
+  --color-gold-dark: #9A7B42;
+  --color-bronze-dark: #2c251e;
+  --color-bronze-muted: #5c5247;
+
+  --bg-primary: #000000;
+  --bg-secondary: #0d0d0d;
+
+  --border-gold-thin: rgba(197, 160, 89, 0.4);
+
+  --font-cinzel: 'Cinzel', serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Montserrat', sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background-color: var(--bg-primary);
+  color: #ffffff;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Full Width High-Res Background for Home Page */
+.home-bg-full {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/bg-hero.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+.divider-line {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, rgba(197, 160, 89, 0.5) 15%, rgba(197, 160, 89, 0.5) 85%, transparent);
+  z-index: 40;
+  pointer-events: none;
+}
+
+.central-artifact {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 50;
+  pointer-events: none;
+}
+
+.border-gold-thin {
+  border: 1px solid rgba(197, 160, 89, 0.45);
+}
+
+/* Buttons from Reference Image */
+.btn-portfolio {
+  background: rgba(225, 215, 200, 0.45);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(197, 160, 89, 0.5);
+  color: #2c251e;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  padding: 0.75rem 3.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-portfolio:hover {
+  background: rgba(225, 215, 200, 0.75);
+  border-color: rgba(197, 160, 89, 0.9);
+  color: #000000;
+  box-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
+}
+
+.btn-tienda {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(197, 160, 89, 0.5);
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  padding: 0.75rem 3.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-tienda:hover {
+  background: rgba(197, 160, 89, 0.2);
+  border-color: rgba(197, 160, 89, 0.9);
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
+}
+
+/* Star Ornament Component */
+.star-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+
+.star-ornament::before,
+.star-ornament::after {
+  content: '';
+  height: 1px;
+  width: 40px;
+  background: rgba(197, 160, 89, 0.4);
+}
+
+.star-symbol {
+  color: #C5A059;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.vertical-rl {
+  writing-mode: vertical-rl;
+}
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}

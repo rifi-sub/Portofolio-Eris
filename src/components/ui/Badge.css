@@ -1,0 +1,42 @@
+.ui-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.ui-badge--terracotta {
+  background: rgba(224, 109, 83, 0.15);
+  color: var(--accent-terracotta);
+  border: 1px solid rgba(224, 109, 83, 0.3);
+}
+
+.ui-badge--amber {
+  background: rgba(217, 119, 6, 0.15);
+  color: var(--accent-amber);
+  border: 1px solid rgba(217, 119, 6, 0.3);
+}
+
+.ui-badge--emerald {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--accent-emerald);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.ui-badge--rose {
+  background: rgba(225, 29, 72, 0.15);
+  color: var(--accent-rose);
+  border: 1px solid rgba(225, 29, 72, 0.3);
+}
+
+.ui-badge--dark {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-dark);
+}
