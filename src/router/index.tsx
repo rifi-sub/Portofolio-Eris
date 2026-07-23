@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import { Layout } from '../components/layout/Layout';
 import { Home } from '../pages/Home';
 import { ListadoServicios } from '../pages/ListadoServicios';
@@ -14,32 +14,37 @@ import { SobreMi } from '../pages/SobreMi';
 import { Contacto } from '../pages/Contacto';
 import { FAQ } from '../pages/FAQ';
 
+// Wrapper that renders Layout with nested routes via <Outlet>
+const WithLayout: React.FC = () => (
+  <Layout>
+    <Outlet />
+  </Layout>
+);
+
 export const AppRouter: React.FC = () => {
   return (
     <BrowserRouter>
-      <Layout>
-        <Routes>
-          {/* Main Entry Selector */}
-          <Route path="/" element={<Home />} />
+      <Routes>
+        {/* Home: owns its nav, footer and full scroll height — NO Layout wrapper */}
+        <Route path="/" element={<Home />} />
 
-          {/* Portfolio & Services Hierarchy */}
+        {/* All other routes share the standard Layout */}
+        <Route element={<WithLayout />}>
           <Route path="/portfolio" element={<ListadoServicios />} />
           <Route path="/portfolio/presupuesto" element={<SolicitarPresupuesto />} />
           <Route path="/portfolio/:servicioSlug" element={<DetalleServicio />} />
           <Route path="/portfolio/:servicioSlug/:proyectoSlug" element={<FichaProyecto />} />
 
-          {/* General Information Pages */}
           <Route path="/proceso-de-trabajo" element={<ProcesoDeTrabajo />} />
           <Route path="/contrato" element={<Contrato />} />
           <Route path="/sobre-mi" element={<SobreMi />} />
           <Route path="/contacto" element={<Contacto />} />
           <Route path="/faq" element={<FAQ />} />
 
-          {/* E-Commerce Hierarchy */}
           <Route path="/tienda" element={<TiendaHome />} />
           <Route path="/tienda/:productoSlug" element={<FichaProducto />} />
-        </Routes>
-      </Layout>
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 };

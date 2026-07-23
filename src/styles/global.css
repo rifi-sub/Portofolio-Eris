@@ -20,13 +20,16 @@
   --font-sans: 'Montserrat', sans-serif;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html, body {
+html,
+body {
   background-color: #fcfaf7;
   color: #2c251e;
   font-family: var(--font-sans);
@@ -262,7 +265,7 @@ a {
   inset: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/bg-hero.jpg');
+  background-image: url('/bg-hero2.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -290,8 +293,13 @@ a {
 }
 
 @keyframes spinSlow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .animate-spin-slow {
