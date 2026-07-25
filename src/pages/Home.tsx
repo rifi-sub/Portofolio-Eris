@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { User, Mail, Globe, Share2, ChevronDown } from 'lucide-react';
 
 const TOTAL_FRAMES = 192;
-const FRAME_PATH = (n: number) => `/def/frame_${String(n).padStart(4, '0')}.png`;
+const FRAME_PATH = (n: number) => `/def/frame_${String(n).padStart(8, '0')}.png`;
 
 function preloadFrames(): HTMLImageElement[] {
   const imgs: HTMLImageElement[] = [];
@@ -19,8 +19,20 @@ export const Home: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const framesRef = useRef<HTMLImageElement[]>([]);
+  const targetFrameRef = useRef(0);
   const currentFrameRef = useRef(0);
-  const rafRef = useRef<number>(0);
+  const prevMouseXRef = useRef<number | null>(null);
+  const prevMouseTimeRef = useRef<number | null>(null);
+  const mouseVelocityRef = useRef<number>(0);
+
+  const [debugInfo, setDebugInfo] = useState({
+    frame: 0,
+    targetFrame: 0,
+    mouseX: 0,
+    velocity: 0,
+    progress: 0,
+    loaded: 0,
+  });
 
   const drawFrame = useCallback((index: number) => {
     const canvas = canvasRef.current;
@@ -33,89 +45,159 @@ export const Home: React.FC = () => {
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
   }, []);
 
-  const handleScroll = useCallback(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    const scrollTop = window.scrollY;
-    const maxScroll = container.scrollHeight - window.innerHeight;
-    const progress = Math.min(Math.max(scrollTop / maxScroll, 0), 1);
-    const frameIndex = Math.round(progress * (TOTAL_FRAMES - 1));
-    if (frameIndex !== currentFrameRef.current) {
-      currentFrameRef.current = frameIndex;
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = requestAnimationFrame(() => drawFrame(frameIndex));
-    }
+  // Animation Loop: Suave interpolación hacia targetFrame
+  useEffect(() => {
+    let animationFrameId: number;
+
+    const render = () => {
+      // Damping / Inercia de velocidad cuando el ratón se para
+      mouseVelocityRef.current *= 0.92;
+
+      // Inercia de frames: avanzamos suavemente hacia targetFrame o por velocidad acumulada
+      if (Math.abs(targetFrameRef.current - currentFrameRef.current) > 0.01) {
+        currentFrameRef.current += (targetFrameRef.current - currentFrameRef.current) * 0.15;
+      }
+
+      // Loop circular de los 192 frames (0 a 191)
+      let displayFrame = Math.round(currentFrameRef.current) % TOTAL_FRAMES;
+      if (displayFrame < 0) displayFrame += TOTAL_FRAMES;
+
+      drawFrame(displayFrame);
+
+      setDebugInfo(prev => ({
+        ...prev,
+        frame: displayFrame,
+        targetFrame: Math.round(targetFrameRef.current) % TOTAL_FRAMES,
+        velocity: Math.round(mouseVelocityRef.current * 100) / 100,
+      }));
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    animationFrameId = requestAnimationFrame(render);
+    return () => cancelAnimationFrame(animationFrameId);
   }, [drawFrame]);
+
+  // Mouse Move Control
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    const now = performance.now();
+    const currentX = e.clientX;
+
+    // 1. Posición Relativa Directa X (0..1)
+    const normalizedX = currentX / window.innerWidth;
+    
+    // 2. Velocidad de Movimiento Delta (dx / dt)
+    if (prevMouseXRef.current !== null && prevMouseTimeRef.current !== null) {
+      const dx = currentX - prevMouseXRef.current;
+      const dt = Math.max(now - prevMouseTimeRef.current, 1);
+      const velocity = dx / dt; // px / ms
+
+      mouseVelocityRef.current = velocity;
+
+      // Combinación: El movimiento del cursor desplaza progresivamente los frames en base a su velocidad y sentido
+      targetFrameRef.current += dx * 0.35;
+    }
+
+    prevMouseXRef.current = currentX;
+    prevMouseTimeRef.current = now;
+
+    setDebugInfo(prev => ({
+      ...prev,
+      mouseX: currentX,
+      progress: Math.round(normalizedX * 100),
+    }));
+  }, []);
 
   useEffect(() => {
     framesRef.current = preloadFrames();
-    framesRef.current[0].onload = () => drawFrame(0);
+
+    let loadCount = 0;
+    framesRef.current.forEach(img => {
+      img.onload = () => {
+        loadCount++;
+        setDebugInfo(prev => ({ ...prev, loaded: loadCount }));
+        if (loadCount === 1) drawFrame(0);
+      };
+    });
+
     const canvas = canvasRef.current;
     if (canvas) {
       canvas.width = 1920;
       canvas.height = 1080;
     }
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      cancelAnimationFrame(rafRef.current);
-    };
-  }, [drawFrame, handleScroll]);
+  }, [drawFrame]);
+
+  const btnStyle: React.CSSProperties = {
+    background: 'rgba(197,160,89,0.15)',
+    border: '1px solid rgba(197,160,89,0.6)',
+    color: '#F3D89D',
+    padding: '4px 10px',
+    cursor: 'pointer',
+    fontSize: '11px',
+    fontFamily: 'monospace',
+    borderRadius: '3px',
+  };
 
   return (
     <div
       ref={containerRef}
-      style={{ position: 'relative', width: '100%', height: `${TOTAL_FRAMES * 3}px`, backgroundColor: '#000' }}
+      onMouseMove={handleMouseMove}
+      style={{ position: 'relative', width: '100%', height: '100vh', backgroundColor: '#000', overflow: 'hidden' }}
     >
-      {/* STICKY VIEWPORT */}
-      <div
-        style={{
-          position: 'sticky',
-          top: 0,
-          width: '100%',
-          height: '100vh',
-          overflow: 'hidden',
-        }}
-      >
-        {/* LAYER 1: Background image */}
+      {/* VIEWPORT */}
+      <div style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' }}>
+
+        {/* LAYER 1: Background */}
         <div className="home-bg-full" />
 
-        {/* LAYER 2: Frame canvas — multiply blends white away */}
+        {/* LAYER 2: Animated frame canvas — centrado, escala 0.8, z-MAX */}
         <canvas
           ref={canvasRef}
           style={{
             position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            zIndex: 3,
-            mixBlendMode: 'multiply',
+            top: '50%',
+            left: '50%',
+            width: '1536px',
+            height: '864px',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 9999,
             pointerEvents: 'none',
           }}
         />
 
         {/* LAYER 3: Top vignette */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '140px',
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.25) 60%, transparent 100%)',
-            zIndex: 4,
-            pointerEvents: 'none',
-          }}
-        />
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '140px', background: 'linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.25) 60%, transparent 100%)', zIndex: 4, pointerEvents: 'none' }} />
+
+        {/* ── DEBUG PANEL ── */}
+        <div style={{
+          position: 'absolute', top: '80px', right: '16px', zIndex: 10000,
+          background: 'rgba(0,0,0,0.85)', border: '1px solid rgba(197,160,89,0.5)',
+          padding: '12px 14px', borderRadius: '6px', color: '#F3D89D',
+          fontFamily: 'monospace', fontSize: '11px', lineHeight: 1.7,
+          backdropFilter: 'blur(8px)', minWidth: '240px',
+        }}>
+          <div style={{ color: '#C5A059', fontWeight: 700, marginBottom: '6px', fontSize: '10px', letterSpacing: '0.2em' }}>
+            ✦ DEBUG — MOUSE TRACKER
+          </div>
+          <div>Frame Actual: <b style={{ color: '#fff' }}>{debugInfo.frame}</b> / {TOTAL_FRAMES - 1}</div>
+          <div>Mouse X: <b style={{ color: '#fff' }}>{debugInfo.mouseX}px</b> ({debugInfo.progress}%)</div>
+          <div>Velocidad: <b style={{ color: '#fff' }}>{debugInfo.velocity} px/ms</b></div>
+          <div>Frames Cargados: <b style={{ color: debugInfo.loaded === TOTAL_FRAMES ? '#4ade80' : '#fbbf24' }}>{debugInfo.loaded}/{TOTAL_FRAMES}</b></div>
+
+          {/* Progress bar */}
+          <div style={{ margin: '8px 0', height: '3px', background: 'rgba(197,160,89,0.2)', borderRadius: '2px' }}>
+            <div style={{ height: '100%', width: `${(debugInfo.frame / (TOTAL_FRAMES - 1)) * 100}%`, background: '#C5A059', borderRadius: '2px', transition: 'width 0.05s' }} />
+          </div>
+
+          <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
+            <button style={btnStyle} onClick={() => { targetFrameRef.current -= 10; }}>◀ -10</button>
+            <button style={btnStyle} onClick={() => { targetFrameRef.current += 10; }}>+10 ▶</button>
+            <button style={btnStyle} onClick={() => { targetFrameRef.current = 0; currentFrameRef.current = 0; }}>RESET</button>
+          </div>
+        </div>
 
         {/* Navigation */}
-        <nav
-          style={{
-            position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 100,
-            padding: '1.75rem 2.5rem', display: 'flex', justifyContent: 'space-between',
-            alignItems: 'center', pointerEvents: 'none', boxSizing: 'border-box',
-          }}
-        >
+        <nav style={{ position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 100, padding: '1.75rem 2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', boxSizing: 'border-box' }}>
           <div style={{ pointerEvents: 'auto' }}>
             <Link to="/">
               <div style={{ border: '1px solid rgba(197,160,89,0.6)', width: '52px', height: '52px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(8px)', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
@@ -125,10 +207,8 @@ export const Home: React.FC = () => {
             </Link>
           </div>
           <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', top: '1.75rem', textAlign: 'center', pointerEvents: 'auto' }}>
-            <h1 style={{ fontFamily: 'var(--font-cinzel)', fontSize: '1.05rem', letterSpacing: '0.45em', color: '#F3D89D', textTransform: 'uppercase', margin: 0, fontWeight: 700, textShadow: '0 2px 10px rgba(0,0,0,0.95), 0 0 20px rgba(197,160,89,0.3)' }}>
-              Ilustrísima Maestra
-            </h1>
-            <div style={{ fontSize: '9px', color: '#C5A059', marginTop: '3px', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>✦</div>
+            <h1 style={{ fontFamily: 'var(--font-cinzel)', fontSize: '1.05rem', letterSpacing: '0.45em', color: '#F3D89D', textTransform: 'uppercase', margin: 0, fontWeight: 700, textShadow: '0 2px 10px rgba(0,0,0,0.95), 0 0 20px rgba(197,160,89,0.3)' }}>Ilustrísima Maestra</h1>
+            <div style={{ fontSize: '9px', color: '#C5A059', marginTop: '3px' }}>✦</div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem', pointerEvents: 'auto' }}>
             <ul style={{ display: 'flex', gap: '2.5rem', listStyle: 'none', fontSize: '10px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#ffffff', margin: 0, padding: 0, fontWeight: 600, textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>
@@ -145,70 +225,46 @@ export const Home: React.FC = () => {
         {/* Split Content */}
         <main style={{ position: 'absolute', inset: 0, display: 'flex', zIndex: 10 }}>
           <div className="divider-line" />
-
           {/* LEFT: PORTFOLIO */}
           <section style={{ position: 'relative', width: '50%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '0 4rem', cursor: 'pointer' }}>
             <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', maxWidth: '420px' }}>
               <span style={{ display: 'block', fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '0.35em', color: '#3e352b', textTransform: 'uppercase', marginBottom: '0.75rem', fontWeight: 600, textShadow: '0 1px 2px rgba(255,255,255,0.6)' }}>Entra en mi</span>
               <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '3.75rem', letterSpacing: '0.12em', color: '#1a1510', textTransform: 'uppercase', marginBottom: '0.25rem', fontWeight: 500, textShadow: '0 1px 3px rgba(255,255,255,0.4)' }}>Portfolio</h2>
               <div className="star-ornament"><span className="star-symbol">✦</span></div>
-              <p style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '0.25em', color: '#3a3025', textTransform: 'uppercase', lineHeight: 2, marginBottom: '2.5rem', fontWeight: 600 }}>
-                Explora mi trabajo<br />y proyectos realizados
-              </p>
-              <Link to="/portfolio" className="btn-home-entry">
-                <span>ENTRAR</span>
-                <span style={{ fontSize: '13px', color: '#9A7B42' }}>→</span>
-              </Link>
+              <p style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '0.25em', color: '#3a3025', textTransform: 'uppercase', lineHeight: 2, marginBottom: '2.5rem', fontWeight: 600 }}>Explora mi trabajo<br />y proyectos realizados</p>
+              <Link to="/portfolio" className="btn-home-entry"><span>ENTRAR</span><span style={{ fontSize: '13px', color: '#9A7B42' }}>→</span></Link>
             </div>
           </section>
-
           {/* RIGHT: TIENDA */}
           <section style={{ position: 'relative', width: '50%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '0 4rem', cursor: 'pointer' }}>
             <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', maxWidth: '420px' }}>
               <span style={{ display: 'block', fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '0.35em', color: '#F3D89D', textTransform: 'uppercase', marginBottom: '0.75rem', fontWeight: 600, textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>Descubre mi</span>
               <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '3.75rem', letterSpacing: '0.12em', color: '#ffffff', textTransform: 'uppercase', marginBottom: '0.25rem', fontWeight: 500, textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}>Tienda</h2>
               <div className="star-ornament"><span className="star-symbol">✦</span></div>
-              <p style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '0.25em', color: '#e0c896', textTransform: 'uppercase', lineHeight: 2, marginBottom: '2.5rem', fontWeight: 600, textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>
-                Productos ilustrados,<br />hechos con amor
-              </p>
-              <Link to="/tienda" className="btn-home-entry-dark">
-                <span>ENTRAR</span>
-                <span style={{ fontSize: '13px', color: '#D4AF65' }}>→</span>
-              </Link>
+              <p style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '0.25em', color: '#e0c896', textTransform: 'uppercase', lineHeight: 2, marginBottom: '2.5rem', fontWeight: 600, textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>Productos ilustrados,<br />hechos con amor</p>
+              <Link to="/tienda" className="btn-home-entry-dark"><span>ENTRAR</span><span style={{ fontSize: '13px', color: '#D4AF65' }}>→</span></Link>
             </div>
           </section>
         </main>
 
         {/* Footer */}
-        <footer
-          style={{
-            position: 'absolute', bottom: 0, left: 0, width: '100%', zIndex: 100,
-            padding: '2rem 2.5rem', display: 'flex', justifyContent: 'space-between',
-            alignItems: 'flex-end', pointerEvents: 'none', boxSizing: 'border-box',
-            background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%)',
-          }}
-        >
+        <footer style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', zIndex: 100, padding: '2rem 2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', pointerEvents: 'none', boxSizing: 'border-box', background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%)' }}>
           <div style={{ display: 'flex', gap: '1.5rem', pointerEvents: 'auto', color: '#F3D89D' }}>
             <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram"><Globe size={18} /></a>
             <a href="mailto:contacto@ilustrisimamaestra.com" aria-label="Email"><Mail size={18} /></a>
             <a href="https://pinterest.com" target="_blank" rel="noreferrer" aria-label="Pinterest"><Share2 size={18} /></a>
           </div>
           <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', bottom: '1.75rem', textAlign: 'center' }}>
-            <div style={{ fontSize: '8px', color: '#C5A059', marginBottom: '0.35rem', textShadow: '0 1px 4px rgba(0,0,0,0.9)' }}>✦</div>
-            <p style={{ fontSize: '9px', letterSpacing: '0.45em', color: '#F3D89D', textTransform: 'uppercase', margin: 0, fontWeight: 500, textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>
-              EL ARTE ES EL PUENTE<br />ENTRE MUNDOS
-            </p>
+            <div style={{ fontSize: '8px', color: '#C5A059', marginBottom: '0.35rem' }}>✦</div>
+            <p style={{ fontSize: '9px', letterSpacing: '0.45em', color: '#F3D89D', textTransform: 'uppercase', margin: 0, fontWeight: 500, textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>EL ARTE ES EL PUENTE<br />ENTRE MUNDOS</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.75rem', pointerEvents: 'auto' }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <span className="vertical-rl" style={{ fontSize: '8px', letterSpacing: '0.35em', color: '#F3D89D', textTransform: 'uppercase', marginBottom: '0.5rem', transform: 'rotate(180deg)', textShadow: '0 1px 4px rgba(0,0,0,0.9)' }}>
-                ✦ REDEEM ✦
-              </span>
+              <span className="vertical-rl" style={{ fontSize: '8px', letterSpacing: '0.35em', color: '#F3D89D', textTransform: 'uppercase', marginBottom: '0.5rem', transform: 'rotate(180deg)' }}>✦ REDEEM ✦</span>
               <div style={{ width: '1px', height: '40px', backgroundColor: 'rgba(197,160,89,0.4)' }} />
             </div>
             <button style={{ display: 'flex', alignItems: 'center', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(197,160,89,0.4)', borderRadius: '4px', padding: '0.35rem 0.65rem', fontSize: '10px', letterSpacing: '0.25em', color: '#F3D89D', textTransform: 'uppercase', cursor: 'pointer', fontWeight: 500, backdropFilter: 'blur(4px)' }}>
-              ES
-              <ChevronDown size={12} style={{ marginLeft: '0.25rem', color: '#F3D89D' }} />
+              ES<ChevronDown size={12} style={{ marginLeft: '0.25rem' }} />
             </button>
           </div>
         </footer>
