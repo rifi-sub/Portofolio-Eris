@@ -1,15 +1,25 @@
 import type { Service, Project, Product, WorkflowStep, FAQItem } from '../types';
 import { mockServices, mockProjects, mockProducts, mockWorkflowSteps, mockFAQs } from '../data/mockData';
 
-const getApiBase = () => {
+export const getApiBase = () => {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
   if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    return 'http://178.105.243.10:5000/api/portfolio';
+    return 'https://alilyback.duckdns.org/eris/api/portfolio';
   }
   return 'http://localhost:5000/api/portfolio';
 };
 
-const API_BASE = getApiBase();
+export const API_BASE = getApiBase();
+
+export const getMediaUrl = (url?: string) => {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  if (url.startsWith('/api/portfolio')) {
+    const base = getApiBase().replace(/\/api\/portfolio\/?$/, '');
+    return `${base}${url}`;
+  }
+  return url;
+};
 
 // Helper genérico para peticiones con fallback
 async function fetchWithFallback<T>(url: string, fallback: T): Promise<T> {

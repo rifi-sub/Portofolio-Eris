@@ -1,7 +1,7 @@
 const getApiBase = () => {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
   if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    return 'http://178.105.243.10:5000/api/portfolio';
+    return 'https://alilyback.duckdns.org/eris/api/portfolio';
   }
   return 'http://localhost:5000/api/portfolio';
 };
