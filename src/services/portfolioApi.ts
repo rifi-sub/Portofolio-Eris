@@ -1,7 +1,15 @@
 import type { Service, Project, Product, WorkflowStep, FAQItem } from '../types';
 import { mockServices, mockProjects, mockProducts, mockWorkflowSteps, mockFAQs } from '../data/mockData';
 
-const API_BASE = 'http://localhost:5000/api/portfolio';
+const getApiBase = () => {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return 'http://178.105.243.10:5000/api/portfolio';
+  }
+  return 'http://localhost:5000/api/portfolio';
+};
+
+const API_BASE = getApiBase();
 
 // Helper genérico para peticiones con fallback
 async function fetchWithFallback<T>(url: string, fallback: T): Promise<T> {
