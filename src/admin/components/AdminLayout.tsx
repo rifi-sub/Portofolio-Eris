@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FileText, Image, Package, Wrench, FolderKanban, LogOut, ExternalLink } from 'lucide-react';
+import { LayoutDashboard, FileText, Image, Package, Wrench, FolderKanban, LogOut, ExternalLink, MessageSquare, ClipboardList } from 'lucide-react';
 import { useAdminAuth } from '../context/AdminAuthContext';
 
 export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -16,9 +16,11 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   const navItems = [
     { label: 'Dashboard', path: '/admin', icon: LayoutDashboard },
     { label: 'Obras / Trabajos', path: '/admin/projects', icon: FolderKanban },
+    { label: 'Seguimiento Encargos', path: '/admin/commissions', icon: ClipboardList },
     { label: 'Editor de Páginas', path: '/admin/content', icon: FileText },
     { label: 'Servicios', path: '/admin/services', icon: Wrench },
     { label: 'Tienda (Productos)', path: '/admin/products', icon: Package },
+    { label: 'Reseñas & Opiniones', path: '/admin/reviews', icon: MessageSquare },
     { label: 'Biblioteca de Medios', path: '/admin/media', icon: Image },
   ];
 

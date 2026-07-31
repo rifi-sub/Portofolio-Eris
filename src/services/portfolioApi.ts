@@ -78,6 +78,19 @@ function parseProduct(p: any): Product {
   };
 }
 
+export interface Review {
+  id: string;
+  author: string;
+  role?: string;
+  company?: string;
+  rating: number;
+  text: string;
+  avatarUrl?: string;
+  photos?: string;
+  order?: number;
+  active?: boolean;
+}
+
 export const portfolioApi = {
   // --- PÚBLICO ---
   getProjects: async (): Promise<Project[]> => {
@@ -140,6 +153,25 @@ export const portfolioApi = {
 
   getFAQs: async (): Promise<FAQItem[]> => {
     return fetchWithFallback<FAQItem[]>(`${API_BASE}/faqs`, mockFAQs);
+  },
+
+  getReviews: async (): Promise<Review[]> => {
+    return fetchWithFallback<Review[]>(`${API_BASE}/reviews`, []);
+  },
+
+  sendCommissionRequest: async (data: any) => {
+    try {
+      const res = await fetch(`${API_BASE}/commissions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error('Error al enviar la solicitud');
+      return res.json();
+    } catch (err) {
+      console.warn('[portfolioApi] Fallback de envío de encargo:', err);
+      return { success: true, localOnly: true };
+    }
   },
 
   getContentSection: async (sectionKey: string, defaultSection?: Partial<ContentSection>): Promise<Partial<ContentSection>> => {

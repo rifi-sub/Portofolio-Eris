@@ -13,6 +13,7 @@ import { FichaProducto } from '../pages/FichaProducto';
 import { SobreMi } from '../pages/SobreMi';
 import { Contacto } from '../pages/Contacto';
 import { FAQ } from '../pages/FAQ';
+import { Resenas } from '../pages/Resenas';
 
 // Admin imports
 import { AdminAuthProvider } from '../admin/context/AdminAuthContext';
@@ -25,6 +26,8 @@ import { AdminProjects } from '../admin/pages/AdminProjects';
 import { AdminServices } from '../admin/pages/AdminServices';
 import { AdminProducts } from '../admin/pages/AdminProducts';
 import { AdminMediaLibrary } from '../admin/pages/AdminMediaLibrary';
+import { AdminReviews } from '../admin/pages/AdminReviews';
+import { AdminCommissions } from '../admin/pages/AdminCommissions';
 
 // Wrapper that renders Layout with nested routes via <Outlet>
 const WithLayout: React.FC = () => (
@@ -59,17 +62,20 @@ export const AppRouter: React.FC = () => {
 
             <Route path="/proceso-de-trabajo" element={<ProcesoDeTrabajo />} />
             <Route path="/contrato" element={<Contrato />} />
-            <Route path="/sobre-mi" element={<SobreMi />} />
-            <Route path="/contacto" element={<Contacto />} />
-            <Route path="/faq" element={<FAQ />} />
 
             <Route path="/tienda" element={<TiendaHome />} />
             <Route path="/tienda/:productoSlug" element={<FichaProducto />} />
+
+            <Route path="/sobre-mi" element={<SobreMi />} />
+            <Route path="/contacto" element={<Contacto />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/reseñas" element={<Resenas />} />
           </Route>
 
-          {/* Admin Routes */}
+          {/* Admin Login (sin layout de admin) */}
           <Route path="/admin/login" element={<AdminLogin />} />
 
+          {/* Admin Protected Routes */}
           <Route element={<WithAdminLayout />}>
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/projects" element={<AdminProjects />} />
@@ -77,6 +83,8 @@ export const AppRouter: React.FC = () => {
             <Route path="/admin/services" element={<AdminServices />} />
             <Route path="/admin/products" element={<AdminProducts />} />
             <Route path="/admin/media" element={<AdminMediaLibrary />} />
+            <Route path="/admin/reviews" element={<AdminReviews />} />
+            <Route path="/admin/commissions" element={<AdminCommissions />} />
           </Route>
         </Routes>
       </BrowserRouter>

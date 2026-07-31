@@ -79,6 +79,24 @@ export const AdminProducts: React.FC = () => {
     }
   };
 
+  const handleDuplicate = async (id: string) => {
+    try {
+      await adminApi.duplicateProduct(id);
+      fetchProducts();
+    } catch (e) {
+      alert('Error al duplicar el producto');
+    }
+  };
+
+  const handleToggleVisibility = async (id: string, currentActive: boolean) => {
+    try {
+      await adminApi.toggleProductVisibility(id, !currentActive);
+      fetchProducts();
+    } catch (e) {
+      alert('Error al cambiar visibilidad');
+    }
+  };
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
@@ -87,7 +105,7 @@ export const AdminProducts: React.FC = () => {
             Gestión de Productos (Tienda)
           </h1>
           <p style={{ color: '#A3998D', margin: '0.5rem 0 0', fontSize: '0.95rem' }}>
-            Administra láminas Fine Art, libros de arte, pinceles digitales y originales.
+            Administra láminas Fine Art, libros, duplicar u ocultar productos.
           </p>
         </div>
         <button
@@ -120,17 +138,17 @@ export const AdminProducts: React.FC = () => {
                 <th style={{ padding: '1rem' }}>Imagen</th>
                 <th style={{ padding: '1rem' }}>Producto</th>
                 <th style={{ padding: '1rem' }}>Precio</th>
-                <th style={{ padding: '1rem' }}>Tipo / Stock</th>
+                <th style={{ padding: '1rem' }}>Estado / Stock</th>
                 <th style={{ padding: '1rem', textAlign: 'right' }}>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {products.map((p) => (
+              {products.map((p: any) => (
                 <tr key={p.id} style={{ borderBottom: '1px solid rgba(197,160,89,0.1)' }}>
                   <td style={{ padding: '0.75rem 1rem' }}>
                     <div style={{ width: '45px', height: '45px', borderRadius: '4px', overflow: 'hidden', backgroundColor: '#000' }}>
                       <img
-                        src={p.coverImage.startsWith('/') ? `http://localhost:5000${p.coverImage}` : p.coverImage}
+                        src={p.coverImage.startsWith('/') && !p.coverImage.startsWith('/def') ? `http://localhost:5000${p.coverImage}` : p.coverImage}
                         alt={p.title}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
@@ -143,21 +161,40 @@ export const AdminProducts: React.FC = () => {
                     {p.price} €
                   </td>
                   <td style={{ padding: '1rem', color: '#A3998D' }}>
-                    {p.isDigital ? 'Digital' : `Físico (${p.stock ?? 0} unid)`}
+                    <span style={{ fontSize: '0.75rem', color: p.active !== false ? '#10B981' : '#EF4444', backgroundColor: 'rgba(255,255,255,0.03)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
+                      {p.active !== false ? 'Activo' : 'Oculto'}
+                    </span>
+                    <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem' }}>
+                      {p.isDigital ? '(Digital)' : `(Stock: ${p.stock ?? 0})`}
+                    </span>
                   </td>
                   <td style={{ padding: '1rem', textAlign: 'right' }}>
-                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                    <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
+                      <button
+                        title="Cambiar visibilidad"
+                        onClick={() => handleToggleVisibility(p.id, p.active !== false)}
+                        style={{ background: 'none', border: '1px solid rgba(197,160,89,0.3)', color: p.active !== false ? '#10B981' : '#8E9BAE', padding: '0.4rem 0.6rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                      >
+                        {p.active !== false ? 'Ocultar' : 'Mostrar'}
+                      </button>
+                      <button
+                        title="Duplicar Producto"
+                        onClick={() => handleDuplicate(p.id)}
+                        style={{ background: 'none', border: '1px solid rgba(197,160,89,0.3)', color: '#F3D89D', padding: '0.4rem 0.6rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                      >
+                        Duplicar
+                      </button>
                       <button
                         onClick={() => handleOpenEdit(p)}
                         style={{ background: 'none', border: '1px solid rgba(197,160,89,0.3)', color: '#F3D89D', padding: '0.4rem 0.6rem', borderRadius: '4px', cursor: 'pointer' }}
                       >
-                        <Edit2 size={16} />
+                        <Edit2 size={15} />
                       </button>
                       <button
                         onClick={() => handleDelete(p.id)}
                         style={{ background: 'none', border: '1px solid rgba(239,68,68,0.3)', color: '#f87171', padding: '0.4rem 0.6rem', borderRadius: '4px', cursor: 'pointer' }}
                       >
-                        <Trash2 size={16} />
+                        <Trash2 size={15} />
                       </button>
                     </div>
                   </td>

@@ -172,5 +172,125 @@ export const adminApi = {
     });
     if (!res.ok) throw new Error('Error al borrar medio');
     return res.json();
+  },
+
+  // Reviews CRUD
+  getReviews: async () => {
+    const res = await fetch(`${API_BASE}/admin/reviews`, { headers: getAuthHeaders() });
+    if (!res.ok) return [];
+    return res.json();
+  },
+
+  createReview: async (data: any) => {
+    const res = await fetch(`${API_BASE}/admin/reviews`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error('Error al crear reseña');
+    return res.json();
+  },
+
+  updateReview: async (id: string, data: any) => {
+    const res = await fetch(`${API_BASE}/admin/reviews/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error('Error al actualizar reseña');
+    return res.json();
+  },
+
+  deleteReview: async (id: string) => {
+    const res = await fetch(`${API_BASE}/admin/reviews/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Error al eliminar reseña');
+    return res.json();
+  },
+
+  // Commissions Management
+  getCommissions: async () => {
+    const res = await fetch(`${API_BASE}/admin/commissions`, { headers: getAuthHeaders() });
+    if (!res.ok) return [];
+    return res.json();
+  },
+
+  updateCommissionStatus: async (id: string, status: string, notes?: string) => {
+    const res = await fetch(`${API_BASE}/admin/commissions/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ status, notes })
+    });
+    if (!res.ok) throw new Error('Error al actualizar encargo');
+    return res.json();
+  },
+
+  deleteCommission: async (id: string) => {
+    const res = await fetch(`${API_BASE}/admin/commissions/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Error al eliminar encargo');
+    return res.json();
+  },
+
+  // Duplication & Visibility Helpers
+  duplicateProject: async (id: string) => {
+    const res = await fetch(`${API_BASE}/admin/projects/${id}/duplicate`, {
+      method: 'POST',
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Error al duplicar obra');
+    return res.json();
+  },
+
+  toggleProjectVisibility: async (id: string, active: boolean) => {
+    const res = await fetch(`${API_BASE}/admin/projects/${id}/visibility`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ active })
+    });
+    if (!res.ok) throw new Error('Error al cambiar visibilidad');
+    return res.json();
+  },
+
+  duplicateService: async (id: string) => {
+    const res = await fetch(`${API_BASE}/admin/services/${id}/duplicate`, {
+      method: 'POST',
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Error al duplicar servicio');
+    return res.json();
+  },
+
+  toggleServiceVisibility: async (id: string, active: boolean) => {
+    const res = await fetch(`${API_BASE}/admin/services/${id}/visibility`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ active })
+    });
+    if (!res.ok) throw new Error('Error al cambiar visibilidad');
+    return res.json();
+  },
+
+  duplicateProduct: async (id: string) => {
+    const res = await fetch(`${API_BASE}/admin/products/${id}/duplicate`, {
+      method: 'POST',
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Error al duplicar producto');
+    return res.json();
+  },
+
+  toggleProductVisibility: async (id: string, active: boolean) => {
+    const res = await fetch(`${API_BASE}/admin/products/${id}/visibility`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ active })
+    });
+    if (!res.ok) throw new Error('Error al cambiar visibilidad');
+    return res.json();
   }
 };

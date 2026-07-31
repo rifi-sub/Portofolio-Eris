@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { portfolioApi } from '../services/portfolioApi';
+import { portfolioApi, getMediaUrl } from '../services/portfolioApi';
 import type { Product } from '../types';
+import { Search, ShoppingBag, PackageCheck, Truck, ShieldCheck, HelpCircle } from 'lucide-react';
 
 export const TiendaHome: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [categoriaSel, setCategoriaSel] = useState<string>('todos');
+  const [precioSel, setPrecioSel] = useState<string>('todos');
 
   useEffect(() => {
     portfolioApi.getProducts().then(setProducts);
@@ -13,103 +16,238 @@ export const TiendaHome: React.FC = () => {
 
   const categorias = [
     { id: 'todos', nombre: 'TODAS LAS OBRAS' },
-    { id: 'fisico', nombre: 'LÁMINAS & OBRAS FÍSICAS' },
+    { id: 'fisico', nombre: 'LÁMINAS & IMPRESIONES' },
     { id: 'digital', nombre: 'DESCARGAS DIGITALES' },
+    { id: 'artbook', nombre: 'LIBROS & ARTBOOKS' },
+    { id: 'original', nombre: 'ÓLEOS ORIGINALES' }
   ];
 
-  const productosFiltrados = categoriaSel === 'todos'
-    ? products
-    : products.filter((p: Product) => (categoriaSel === 'digital' ? p.isDigital : !p.isDigital));
+  const productosFiltrados = products.filter((p: Product) => {
+    // 1. Búsqueda por título
+    const coincideTexto = p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          p.description.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // 2. Filtro Categoría
+    let coincideCat = true;
+    if (categoriaSel === 'digital') coincideCat = p.isDigital;
+    if (categoriaSel === 'fisico') coincideCat = !p.isDigital && p.category === 'physical-print';
+    if (categoriaSel === 'artbook') coincideCat = p.category === 'merch' || p.title.toLowerCase().includes('artbook') || p.title.toLowerCase().includes('libro');
+    if (categoriaSel === 'original') coincideCat = p.category === 'original-art';
+
+    // 3. Filtro Precio
+    let coincidePrecio = true;
+    if (precioSel === 'under25') coincidePrecio = p.price <= 25;
+    if (precioSel === '25to50') coincidePrecio = p.price > 25 && p.price <= 50;
+    if (precioSel === 'over50') coincidePrecio = p.price > 50;
+
+    return coincideTexto && coincideCat && coincidePrecio;
+  });
 
   return (
     <div className="page-container">
-      {/* Hero Banner Section */}
-      <section className="section-wrapper" style={{ paddingTop: '2.5rem', paddingBottom: '2.5rem' }}>
-        <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto' }}>
-          <span className="section-subtitle">OBRAS ILUSTRADAS & EDICIONES LIMITADAS</span>
-          <h1 className="page-title" style={{ fontSize: '3.25rem', marginBottom: '0.75rem' }}>
-            TIENDA DE AUTOR <span style={{ color: '#C5A059', fontSize: '1.8rem' }}>✦</span>
+      <div className="section-wrapper">
+        {/* Header de la Tienda */}
+        <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+          <span className="section-subtitle">OBRAS DE AUTOR & EDICIONES LIMITADAS</span>
+          <h1 className="page-title" style={{ fontSize: '3.25rem' }}>
+            TIENDA DE ARTE DE AUTOR <span style={{ color: '#C5A059' }}>✦</span>
           </h1>
-
-          <div className="star-ornament" style={{ justifyContent: 'center', margin: '1rem 0' }}>
-            <span className="star-symbol">✦</span>
-          </div>
-
-          <p style={{ fontSize: '12px', letterSpacing: '0.15em', color: '#5c5247', lineHeight: 1.8, textTransform: 'uppercase' }}>
-            Láminas Fine Art firmadas, zines de edición limitada y colecciones de arte digital de alta calidad.
+          <p style={{ maxWidth: '620px', margin: '1rem auto 0 auto', fontSize: '13px', color: '#5c5247', lineHeight: 1.8 }}>
+            Explora colecciones exclusivas de láminas Fine Art impresas en papel de algodón de 310g, piezas al óleo originales y recursos digitales para creadores.
           </p>
         </div>
-      </section>
 
-      {/* Category Filter Pills */}
-      <section className="section-wrapper" style={{ paddingTop: 0, paddingBottom: '2rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-          {categorias.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setCategoriaSel(cat.id)}
-              style={{
-                background: categoriaSel === cat.id ? '#C5A059' : '#ffffff',
-                color: categoriaSel === cat.id ? '#ffffff' : '#2c251e',
-                border: '1px solid rgba(197, 160, 89, 0.4)',
-                padding: '0.6rem 1.5rem',
-                fontSize: '10px',
-                letterSpacing: '0.2em',
-                textTransform: 'uppercase',
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.25s ease',
-              }}
-            >
-              {cat.nombre}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {/* Products Grid */}
-      <section className="section-wrapper" style={{ paddingTop: 0 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
-          {productosFiltrados.map((prod: Product, index: number) => (
-            <div key={prod.id} className="card-hover-gold" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column' }}>
-              {/* Top Meta */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '10px', color: '#C5A059', marginBottom: '0.75rem', fontWeight: 600 }}>
-                <span>0{index + 1}</span>
-                <span className="badge-gold" style={{ fontSize: '8px' }}>{!prod.isDigital ? 'Edición Física' : 'Digital'}</span>
-              </div>
-
-              {/* Product Image */}
-              <div style={{ width: '100%', height: '220px', overflow: 'hidden', background: '#f5f2eb', marginBottom: '1.25rem' }}>
-                <img
-                  src={(prod.coverImage || '').startsWith('/') && !(prod.coverImage || '').startsWith('/def') ? `http://localhost:5000${prod.coverImage}` : prod.coverImage}
-                  alt={prod.title}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              </div>
-
-              {/* Product Title & Category */}
-              <span style={{ fontSize: '9px', letterSpacing: '0.25em', color: '#C5A059', textTransform: 'uppercase', fontWeight: 600, display: 'block', marginBottom: '0.35rem' }}>
-                {prod.category}
-              </span>
-              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.15rem', color: '#1a1510', marginBottom: '0.75rem', fontWeight: 500 }}>
-                {prod.title}
-              </h3>
-
-              {/* Price & Action */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid rgba(197, 160, 89, 0.2)' }}>
-                <span style={{ fontFamily: 'var(--font-cinzel)', fontSize: '1.1rem', fontWeight: 600, color: '#1a1510' }}>
-                  {prod.price.toFixed(2)} €
-                </span>
-
-                <Link to={`/tienda/${prod.slug}`} className="link-gold">
-                  <span>VER DETALLES</span>
-                  <span>→</span>
-                </Link>
-              </div>
+        {/* Buscador & Barra de Filtros */}
+        <div style={{ background: '#ffffff', border: '1px solid rgba(197, 160, 89, 0.35)', padding: '1.75rem', marginBottom: '3.5rem', boxShadow: '0 8px 24px rgba(0,0,0,0.02)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: '1.25rem', alignItems: 'center' }}>
+            {/* Input Buscador */}
+            <div style={{ position: 'relative' }}>
+              <Search size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#C5A059' }} />
+              <input
+                type="text"
+                placeholder="Buscar obra, lámina o producto..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem 1rem 0.75rem 2.75rem',
+                  border: '1px solid rgba(197, 160, 89, 0.3)',
+                  backgroundColor: '#faf8f5',
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '12px',
+                  color: '#1a1510',
+                  outline: 'none'
+                }}
+              />
             </div>
-          ))}
+
+            {/* Selector de Precio */}
+            <div>
+              <select
+                value={precioSel}
+                onChange={(e) => setPrecioSel(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem 1rem',
+                  border: '1px solid rgba(197, 160, 89, 0.3)',
+                  backgroundColor: '#faf8f5',
+                  fontFamily: 'var(--font-cinzel)',
+                  fontSize: '11px',
+                  color: '#1a1510',
+                  outline: 'none',
+                  letterSpacing: '0.05em'
+                }}
+              >
+                <option value="todos">TODOS LOS PRECIOS</option>
+                <option value="under25">HASTA 25 €</option>
+                <option value="25to50">DE 25 € A 50 €</option>
+                <option value="over50">MÁS DE 50 €</option>
+              </select>
+            </div>
+
+            {/* Contador de Productos */}
+            <div style={{ textAlign: 'right', fontFamily: 'var(--font-cinzel)', fontSize: '11px', color: '#C5A059', fontWeight: 600 }}>
+              MOSTRANDO {productosFiltrados.length} OBRAS
+            </div>
+          </div>
+
+          {/* Selector de Categorías (Tabs) */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px dashed rgba(197, 160, 89, 0.2)' }}>
+            {categorias.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setCategoriaSel(cat.id)}
+                className={categoriaSel === cat.id ? 'btn-gold-primary' : 'btn-gold-outline'}
+                style={{ fontSize: '10px', padding: '0.45rem 1rem' }}
+              >
+                <span>{cat.nombre}</span>
+              </button>
+            ))}
+          </div>
         </div>
-      </section>
+
+        {/* Grid de Productos */}
+        {productosFiltrados.length === 0 ? (
+          <div style={{ padding: '4rem', textAlign: 'center', background: '#ffffff', border: '1px solid rgba(197,160,89,0.25)', color: '#5c5247' }}>
+            <p>No se encontraron productos que coincidan con tu búsqueda.</p>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '2.5rem', marginBottom: '5rem' }}>
+            {productosFiltrados.map((prod, index) => {
+              const coverUrl = getMediaUrl(prod.coverImage);
+              const isLimited = prod.stock && prod.stock <= 15;
+              const badgeText = prod.isDigital ? 'DIGITAL HD' : isLimited ? `EDICIÓN LIMITADA (${prod.stock} ud)` : 'FINE ART';
+
+              return (
+                <div key={prod.id} className="card-luxury" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    {/* Header Card Meta */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '10px', color: '#C5A059', marginBottom: '0.75rem', fontWeight: 600 }}>
+                      <span>0{index + 1}</span>
+                      <span className="badge-gold" style={{ fontSize: '8px' }}>{badgeText}</span>
+                    </div>
+
+                    {/* Imagen del Producto */}
+                    <div style={{ width: '100%', height: '260px', overflow: 'hidden', background: '#f5f2eb', marginBottom: '1.25rem', border: '1px solid rgba(197,160,89,0.2)' }}>
+                      <img
+                        src={coverUrl}
+                        alt={prod.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    </div>
+
+                    {/* Título & Descripción */}
+                    <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', color: '#1a1510', marginBottom: '0.5rem', lineHeight: 1.3 }}>
+                      {prod.title}
+                    </h3>
+                    <p style={{ fontSize: '11px', color: '#5c5247', lineHeight: 1.6, marginBottom: '1.25rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {prod.description}
+                    </p>
+                  </div>
+
+                  {/* Footer Card & Precio */}
+                  <div style={{ borderTop: '1px solid rgba(197, 160, 89, 0.2)', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <span style={{ fontSize: '9px', textTransform: 'uppercase', color: '#7a6f64', display: 'block' }}>PRECIO</span>
+                      <span style={{ fontFamily: 'var(--font-cinzel)', fontSize: '1.25rem', fontWeight: 700, color: '#1a1510' }}>
+                        {prod.price.toFixed(2)} €
+                      </span>
+                    </div>
+
+                    <Link to={`/tienda/${prod.slug}`} className="btn-gold-primary" style={{ padding: '0.5rem 1rem', fontSize: '10px' }}>
+                      <ShoppingBag size={13} />
+                      <span>VER OBRA</span>
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Sección Informativa: CÓMO HACER UN PEDIDO */}
+        <div style={{ background: '#ffffff', border: '1px solid rgba(197, 160, 89, 0.35)', padding: '3.5rem 3rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+            <span className="section-subtitle">GUÍA PARA EL COMPRADOR</span>
+            <h2 className="section-title">
+              CÓMO FUNCIONA EL ENVÍO & COMPRA <span style={{ color: '#C5A059' }}>✦</span>
+            </h2>
+            <p style={{ fontSize: '12px', color: '#5c5247', maxWidth: '560px', margin: '0.5rem auto 0 auto' }}>
+              Cada pieza física se empaqueta a mano con cuidado artesanal para garantizar que llegue impecable a tus manos.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '2.5rem' }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#faf8f5', border: '1px solid #C5A059', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto', color: '#C5A059' }}>
+                <PackageCheck size={22} />
+              </div>
+              <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', color: '#1a1510', marginBottom: '0.5rem' }}>
+                1. Selección & Firma
+              </h4>
+              <p style={{ fontSize: '11px', color: '#5c5247', lineHeight: 1.6 }}>
+                Las láminas Fine Art son firmadas y numeradas a mano antes del empaquetado.
+              </p>
+            </div>
+
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#faf8f5', border: '1px solid #C5A059', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto', color: '#C5A059' }}>
+                <Truck size={22} />
+              </div>
+              <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', color: '#1a1510', marginBottom: '0.5rem' }}>
+                2. Empaque Protector
+              </h4>
+              <p style={{ fontSize: '11px', color: '#5c5247', lineHeight: 1.6 }}>
+                Protegidas en tubos rígidos de cartón kraft reforzado con papel de seda sin ácido.
+              </p>
+            </div>
+
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#faf8f5', border: '1px solid #C5A059', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto', color: '#C5A059' }}>
+                <ShieldCheck size={22} />
+              </div>
+              <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', color: '#1a1510', marginBottom: '0.5rem' }}>
+                3. Envío Certificado
+              </h4>
+              <p style={{ fontSize: '11px', color: '#5c5247', lineHeight: 1.6 }}>
+                Envíos nacionales en 48-72h e internacionales con código de seguimiento en tiempo real.
+              </p>
+            </div>
+
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#faf8f5', border: '1px solid #C5A059', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto', color: '#C5A059' }}>
+                <HelpCircle size={22} />
+              </div>
+              <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', color: '#1a1510', marginBottom: '0.5rem' }}>
+                4. Descargas Instantáneas
+              </h4>
+              <p style={{ fontSize: '11px', color: '#5c5247', lineHeight: 1.6 }}>
+                Los archivos de descargas digitales se reciben al instante en tu correo tras la confirmación.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Image as ImageIcon, Star, X, Save } from 'lucide-react';
+import { Plus, Edit2, Trash2, Image as ImageIcon, X, Save } from 'lucide-react';
 import { portfolioApi } from '../../services/portfolioApi';
 import { adminApi } from '../services/adminApi';
 import { MediaPickerModal } from '../components/MediaPickerModal';
@@ -85,6 +85,24 @@ export const AdminProjects: React.FC = () => {
     }
   };
 
+  const handleDuplicate = async (id: string) => {
+    try {
+      await adminApi.duplicateProject(id);
+      fetchProjects();
+    } catch (e) {
+      alert('Error al duplicar la obra');
+    }
+  };
+
+  const handleToggleVisibility = async (id: string, currentActive: boolean) => {
+    try {
+      await adminApi.toggleProjectVisibility(id, !currentActive);
+      fetchProjects();
+    } catch (e) {
+      alert('Error al cambiar visibilidad');
+    }
+  };
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
@@ -93,7 +111,7 @@ export const AdminProjects: React.FC = () => {
             Gestión de Obras & Trabajos de Arte
           </h1>
           <p style={{ color: '#A3998D', margin: '0.5rem 0 0', fontSize: '0.95rem' }}>
-            Añade, modifica o elimina proyectos del portfolio público.
+            Añade, modifica, duplica u oculta proyectos del portfolio público.
           </p>
         </div>
         <button
@@ -131,17 +149,17 @@ export const AdminProjects: React.FC = () => {
                 <th style={{ padding: '1rem' }}>Portada</th>
                 <th style={{ padding: '1rem' }}>Título</th>
                 <th style={{ padding: '1rem' }}>Cliente / Año</th>
-                <th style={{ padding: '1rem' }}>Destacado</th>
+                <th style={{ padding: '1rem' }}>Estado</th>
                 <th style={{ padding: '1rem', textAlign: 'right' }}>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {projects.map((p) => (
+              {projects.map((p: any) => (
                 <tr key={p.id} style={{ borderBottom: '1px solid rgba(197,160,89,0.1)' }}>
                   <td style={{ padding: '0.75rem 1rem' }}>
                     <div style={{ width: '50px', height: '50px', borderRadius: '4px', overflow: 'hidden', backgroundColor: '#000' }}>
                       <img
-                        src={p.coverImage.startsWith('/') ? `http://localhost:5000${p.coverImage}` : p.coverImage}
+                        src={p.coverImage.startsWith('/') && !p.coverImage.startsWith('/def') ? `http://localhost:5000${p.coverImage}` : p.coverImage}
                         alt={p.title}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
@@ -156,25 +174,37 @@ export const AdminProjects: React.FC = () => {
                     {p.client || '—'} {p.year ? `(${p.year})` : ''}
                   </td>
                   <td style={{ padding: '1rem' }}>
-                    {p.featured ? (
-                      <span style={{ color: '#F3D89D', display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8rem' }}>
-                        <Star size={14} fill="#F3D89D" /> Destacado
-                      </span>
-                    ) : '—'}
+                    <span style={{ fontSize: '0.75rem', color: p.active !== false ? '#10B981' : '#EF4444', backgroundColor: 'rgba(255,255,255,0.03)', padding: '0.25rem 0.5rem', borderRadius: '4px' }}>
+                      {p.active !== false ? 'Publicado' : 'Oculto / Borrador'}
+                    </span>
                   </td>
                   <td style={{ padding: '1rem', textAlign: 'right' }}>
-                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                    <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
+                      <button
+                        title="Cambiar visibilidad"
+                        onClick={() => handleToggleVisibility(p.id, p.active !== false)}
+                        style={{ background: 'none', border: '1px solid rgba(197,160,89,0.3)', color: p.active !== false ? '#10B981' : '#8E9BAE', padding: '0.4rem 0.6rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                      >
+                        {p.active !== false ? 'Ocultar' : 'Mostrar'}
+                      </button>
+                      <button
+                        title="Duplicar Obra"
+                        onClick={() => handleDuplicate(p.id)}
+                        style={{ background: 'none', border: '1px solid rgba(197,160,89,0.3)', color: '#F3D89D', padding: '0.4rem 0.6rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                      >
+                        Duplicar
+                      </button>
                       <button
                         onClick={() => handleOpenEdit(p)}
                         style={{ background: 'none', border: '1px solid rgba(197,160,89,0.3)', color: '#F3D89D', padding: '0.4rem 0.6rem', borderRadius: '4px', cursor: 'pointer' }}
                       >
-                        <Edit2 size={16} />
+                        <Edit2 size={15} />
                       </button>
                       <button
                         onClick={() => handleDelete(p.id)}
                         style={{ background: 'none', border: '1px solid rgba(239,68,68,0.3)', color: '#f87171', padding: '0.4rem 0.6rem', borderRadius: '4px', cursor: 'pointer' }}
                       >
-                        <Trash2 size={16} />
+                        <Trash2 size={15} />
                       </button>
                     </div>
                   </td>

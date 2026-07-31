@@ -78,6 +78,24 @@ export const AdminServices: React.FC = () => {
     }
   };
 
+  const handleDuplicate = async (id: string) => {
+    try {
+      await adminApi.duplicateService(id);
+      fetchServices();
+    } catch (e) {
+      alert('Error al duplicar el servicio');
+    }
+  };
+
+  const handleToggleVisibility = async (id: string, currentActive: boolean) => {
+    try {
+      await adminApi.toggleServiceVisibility(id, !currentActive);
+      fetchServices();
+    } catch (e) {
+      alert('Error al cambiar visibilidad');
+    }
+  };
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
@@ -86,7 +104,7 @@ export const AdminServices: React.FC = () => {
             Gestión de Servicios
           </h1>
           <p style={{ color: '#A3998D', margin: '0.5rem 0 0', fontSize: '0.95rem' }}>
-            Personaliza los paquetes de encargo, tarifas desde y entregables.
+            Personaliza los paquetes de encargo, tarifas desde, duplicar u ocultar.
           </p>
         </div>
         <button
@@ -113,7 +131,7 @@ export const AdminServices: React.FC = () => {
         <div style={{ textAlign: 'center', padding: '3rem', color: '#A3998D' }}>Cargando servicios...</div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.25rem' }}>
-          {services.map((s) => (
+          {services.map((s: any) => (
             <div
               key={s.id}
               style={{
@@ -132,20 +150,37 @@ export const AdminServices: React.FC = () => {
                   <span style={{ fontSize: '0.8rem', color: '#C5A059', fontWeight: 700 }}>{s.priceFrom} {s.currency}</span>
                 </div>
                 <p style={{ fontSize: '0.85rem', color: '#A3998D', margin: '0 0 1rem' }}>{s.tagline}</p>
+                <span style={{ fontSize: '0.75rem', color: s.active !== false ? '#10B981' : '#EF4444', backgroundColor: 'rgba(255,255,255,0.03)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
+                  {s.active !== false ? 'Activo' : 'Oculto / Borrador'}
+                </span>
               </div>
 
-              <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', paddingTop: '1rem', borderTop: '1px solid rgba(197,160,89,0.15)' }}>
+              <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end', paddingTop: '1rem', borderTop: '1px solid rgba(197,160,89,0.15)', marginTop: '1rem' }}>
+                <button
+                  title="Cambiar visibilidad"
+                  onClick={() => handleToggleVisibility(s.id, s.active !== false)}
+                  style={{ background: 'none', border: '1px solid rgba(197,160,89,0.3)', color: s.active !== false ? '#10B981' : '#8E9BAE', padding: '0.4rem 0.6rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                >
+                  {s.active !== false ? 'Ocultar' : 'Mostrar'}
+                </button>
+                <button
+                  title="Duplicar Servicio"
+                  onClick={() => handleDuplicate(s.id)}
+                  style={{ background: 'none', border: '1px solid rgba(197,160,89,0.3)', color: '#F3D89D', padding: '0.4rem 0.6rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                >
+                  Duplicar
+                </button>
                 <button
                   onClick={() => handleOpenEdit(s)}
                   style={{ background: 'none', border: '1px solid rgba(197,160,89,0.3)', color: '#F3D89D', padding: '0.4rem 0.6rem', borderRadius: '4px', cursor: 'pointer' }}
                 >
-                  <Edit2 size={16} />
+                  <Edit2 size={15} />
                 </button>
                 <button
                   onClick={() => handleDelete(s.id)}
                   style={{ background: 'none', border: '1px solid rgba(239,68,68,0.3)', color: '#f87171', padding: '0.4rem 0.6rem', borderRadius: '4px', cursor: 'pointer' }}
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={15} />
                 </button>
               </div>
             </div>
