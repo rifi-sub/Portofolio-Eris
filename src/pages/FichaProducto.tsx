@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { mockProducts } from '../data/mockData';
+import { portfolioApi } from '../services/portfolioApi';
 import type { Product } from '../types';
 import { ShoppingBag } from 'lucide-react';
 
 export const FichaProducto: React.FC = () => {
   const { productoSlug } = useParams<{ productoSlug: string }>();
-  const producto: Product = mockProducts.find((p: Product) => p.slug === productoSlug) || mockProducts[0];
+  const [producto, setProducto] = useState<Product | null>(null);
+
+  useEffect(() => {
+    if (productoSlug) {
+      portfolioApi.getProductBySlug(productoSlug).then((data) => {
+        if (data) setProducto(data);
+      });
+    }
+  }, [productoSlug]);
+
+  if (!producto) {
+    return <div className="page-container"><div style={{ padding: '4rem', textAlign: 'center', color: '#5c5247' }}>Cargando producto...</div></div>;
+  }
 
   return (
     <div className="page-container">

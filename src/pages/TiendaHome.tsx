@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { mockProducts } from '../data/mockData';
+import { portfolioApi } from '../services/portfolioApi';
 import type { Product } from '../types';
 
 export const TiendaHome: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>([]);
   const [categoriaSel, setCategoriaSel] = useState<string>('todos');
+
+  useEffect(() => {
+    portfolioApi.getProducts().then(setProducts);
+  }, []);
 
   const categorias = [
     { id: 'todos', nombre: 'TODAS LAS OBRAS' },
@@ -13,8 +18,8 @@ export const TiendaHome: React.FC = () => {
   ];
 
   const productosFiltrados = categoriaSel === 'todos'
-    ? mockProducts
-    : mockProducts.filter((p: Product) => (categoriaSel === 'digital' ? p.isDigital : !p.isDigital));
+    ? products
+    : products.filter((p: Product) => (categoriaSel === 'digital' ? p.isDigital : !p.isDigital));
 
   return (
     <div className="page-container">
@@ -76,7 +81,7 @@ export const TiendaHome: React.FC = () => {
               {/* Product Image */}
               <div style={{ width: '100%', height: '220px', overflow: 'hidden', background: '#f5f2eb', marginBottom: '1.25rem' }}>
                 <img
-                  src={prod.coverImage}
+                  src={(prod.coverImage || '').startsWith('/') && !(prod.coverImage || '').startsWith('/def') ? `http://localhost:5000${prod.coverImage}` : prod.coverImage}
                   alt={prod.title}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />

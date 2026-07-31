@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { User, Mail, Globe, Share2, ChevronDown } from 'lucide-react';
 
@@ -25,14 +25,7 @@ export const Home: React.FC = () => {
   const prevMouseTimeRef = useRef<number | null>(null);
   const mouseVelocityRef = useRef<number>(0);
 
-  const [debugInfo, setDebugInfo] = useState({
-    frame: 0,
-    targetFrame: 0,
-    mouseX: 0,
-    velocity: 0,
-    progress: 0,
-    loaded: 0,
-  });
+
 
   const drawFrame = useCallback((index: number) => {
     const canvas = canvasRef.current;
@@ -64,12 +57,7 @@ export const Home: React.FC = () => {
 
       drawFrame(displayFrame);
 
-      setDebugInfo(prev => ({
-        ...prev,
-        frame: displayFrame,
-        targetFrame: Math.round(targetFrameRef.current) % TOTAL_FRAMES,
-        velocity: Math.round(mouseVelocityRef.current * 100) / 100,
-      }));
+
 
       animationFrameId = requestAnimationFrame(render);
     };
@@ -83,8 +71,7 @@ export const Home: React.FC = () => {
     const now = performance.now();
     const currentX = e.clientX;
 
-    // 1. Posición Relativa Directa X (0..1)
-    const normalizedX = currentX / window.innerWidth;
+
     
     // 2. Velocidad de Movimiento Delta (dx / dt)
     if (prevMouseXRef.current !== null && prevMouseTimeRef.current !== null) {
@@ -101,11 +88,7 @@ export const Home: React.FC = () => {
     prevMouseXRef.current = currentX;
     prevMouseTimeRef.current = now;
 
-    setDebugInfo(prev => ({
-      ...prev,
-      mouseX: currentX,
-      progress: Math.round(normalizedX * 100),
-    }));
+
   }, []);
 
   useEffect(() => {
@@ -115,7 +98,7 @@ export const Home: React.FC = () => {
     framesRef.current.forEach(img => {
       img.onload = () => {
         loadCount++;
-        setDebugInfo(prev => ({ ...prev, loaded: loadCount }));
+
         if (loadCount === 1) drawFrame(0);
       };
     });
@@ -127,16 +110,7 @@ export const Home: React.FC = () => {
     }
   }, [drawFrame]);
 
-  const btnStyle: React.CSSProperties = {
-    background: 'rgba(197,160,89,0.15)',
-    border: '1px solid rgba(197,160,89,0.6)',
-    color: '#F3D89D',
-    padding: '4px 10px',
-    cursor: 'pointer',
-    fontSize: '11px',
-    fontFamily: 'monospace',
-    borderRadius: '3px',
-  };
+
 
   return (
     <div
@@ -168,33 +142,7 @@ export const Home: React.FC = () => {
         {/* LAYER 3: Top vignette */}
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '140px', background: 'linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.25) 60%, transparent 100%)', zIndex: 4, pointerEvents: 'none' }} />
 
-        {/* ── DEBUG PANEL ── */}
-        <div style={{
-          position: 'absolute', top: '80px', right: '16px', zIndex: 10000,
-          background: 'rgba(0,0,0,0.85)', border: '1px solid rgba(197,160,89,0.5)',
-          padding: '12px 14px', borderRadius: '6px', color: '#F3D89D',
-          fontFamily: 'monospace', fontSize: '11px', lineHeight: 1.7,
-          backdropFilter: 'blur(8px)', minWidth: '240px',
-        }}>
-          <div style={{ color: '#C5A059', fontWeight: 700, marginBottom: '6px', fontSize: '10px', letterSpacing: '0.2em' }}>
-            ✦ DEBUG — MOUSE TRACKER
-          </div>
-          <div>Frame Actual: <b style={{ color: '#fff' }}>{debugInfo.frame}</b> / {TOTAL_FRAMES - 1}</div>
-          <div>Mouse X: <b style={{ color: '#fff' }}>{debugInfo.mouseX}px</b> ({debugInfo.progress}%)</div>
-          <div>Velocidad: <b style={{ color: '#fff' }}>{debugInfo.velocity} px/ms</b></div>
-          <div>Frames Cargados: <b style={{ color: debugInfo.loaded === TOTAL_FRAMES ? '#4ade80' : '#fbbf24' }}>{debugInfo.loaded}/{TOTAL_FRAMES}</b></div>
 
-          {/* Progress bar */}
-          <div style={{ margin: '8px 0', height: '3px', background: 'rgba(197,160,89,0.2)', borderRadius: '2px' }}>
-            <div style={{ height: '100%', width: `${(debugInfo.frame / (TOTAL_FRAMES - 1)) * 100}%`, background: '#C5A059', borderRadius: '2px', transition: 'width 0.05s' }} />
-          </div>
-
-          <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
-            <button style={btnStyle} onClick={() => { targetFrameRef.current -= 10; }}>◀ -10</button>
-            <button style={btnStyle} onClick={() => { targetFrameRef.current += 10; }}>+10 ▶</button>
-            <button style={btnStyle} onClick={() => { targetFrameRef.current = 0; currentFrameRef.current = 0; }}>RESET</button>
-          </div>
-        </div>
 
         {/* Navigation */}
         <nav style={{ position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 100, padding: '1.75rem 2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', boxSizing: 'border-box' }}>

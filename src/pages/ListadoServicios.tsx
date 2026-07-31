@@ -1,46 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Eye, Sparkles, Feather } from 'lucide-react';
+import { portfolioApi } from '../services/portfolioApi';
+import type { Service } from '../types';
 
 export const ListadoServicios: React.FC = () => {
+  const [services, setServices] = useState<Service[]>([]);
 
-  const services = [
-    {
-      id: '01',
-      title: 'ILUSTRACIÓN EDITORIAL',
-      image: '/srv-editorial.png',
-      description: 'Ilustraciones para libros, revistas, portadas y publicaciones.',
-      slug: 'ilustracion-editorial',
-    },
-    {
-      id: '02',
-      title: 'DISEÑO DE PERSONAJES',
-      image: '/srv-character.png',
-      description: 'Personajes memorables con identidad, historia y personalidad.',
-      slug: 'branding-personaje',
-    },
-    {
-      id: '03',
-      title: 'DISEÑO DE ENTORNOS',
-      image: '/srv-environment.png',
-      description: 'Mundos, escenarios y atmósferas que cuentan historias.',
-      slug: 'arte-digital-concepto',
-    },
-    {
-      id: '04',
-      title: 'CONCEPT ART',
-      image: '/srv-concept.png',
-      description: 'Desarrollo visual de ideas para cine, videojuegos y proyectos creativos.',
-      slug: 'arte-digital-concepto',
-    },
-    {
-      id: '05',
-      title: 'PROPS Y OBJETOS',
-      image: '/srv-props.png',
-      description: 'Diseño de objetos con función narrativa y estética.',
-      slug: 'encargo-personalizado',
-    },
-  ];
+  useEffect(() => {
+    portfolioApi.getServices().then(setServices);
+  }, []);
 
   return (
     <div style={{ backgroundColor: '#fcfaf7', color: '#2c251e', minHeight: '100vh', fontFamily: 'var(--font-sans)' }}>
@@ -221,7 +190,7 @@ export const ListadoServicios: React.FC = () => {
               {/* Card Image */}
               <div style={{ width: '100%', height: '140px', overflow: 'hidden', marginBottom: '1.25rem', background: '#f5f2eb' }}>
                 <img
-                  src={srv.image}
+                  src={(srv.coverImage || (srv as any).image || '').startsWith('/') && !(srv.coverImage || (srv as any).image || '').startsWith('/def') ? `http://localhost:5000${srv.coverImage || (srv as any).image}` : (srv.coverImage || (srv as any).image)}
                   alt={srv.title}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />

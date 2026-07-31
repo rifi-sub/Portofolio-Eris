@@ -1,11 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { mockServices } from '../data/mockData';
+import { portfolioApi } from '../services/portfolioApi';
 import type { Service } from '../types';
 
 export const DetalleServicio: React.FC = () => {
   const { servicioSlug } = useParams<{ servicioSlug: string }>();
-  const servicio: Service = mockServices.find((s: Service) => s.slug === servicioSlug) || mockServices[0];
+  const [servicio, setServicio] = useState<Service | null>(null);
+
+  useEffect(() => {
+    if (servicioSlug) {
+      portfolioApi.getServiceBySlug(servicioSlug).then((data) => {
+        if (data) setServicio(data);
+      });
+    }
+  }, [servicioSlug]);
 
   // Specific service custom content mapping
   const serviceCustomContent: Record<string, {
@@ -64,6 +72,10 @@ export const DetalleServicio: React.FC = () => {
       ],
     },
   };
+
+  if (!servicio) {
+    return <div className="page-container"><div style={{ padding: '4rem', textAlign: 'center', color: '#5c5247' }}>Cargando servicio...</div></div>;
+  }
 
   const currentDetails = serviceCustomContent[servicio.slug] || serviceCustomContent['ilustracion-editorial'];
 

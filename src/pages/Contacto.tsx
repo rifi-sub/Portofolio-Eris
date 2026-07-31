@@ -1,8 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, MapPin, Send, CheckCircle2, Clock } from 'lucide-react';
+import { portfolioApi, type ContentSection } from '../services/portfolioApi';
 
 export const Contacto: React.FC = () => {
   const [enviado, setEnviado] = useState(false);
+  const [sectionData, setSectionData] = useState<Partial<ContentSection>>({});
+
+  useEffect(() => {
+    portfolioApi.getContentSection('contacto_info', {
+      title: 'CONTACTO & ESTUDIO',
+      subtitle: 'CANAL DIRECTO',
+      content: '¿Tienes una propuesta editorial, encargo particular o consulta sobre la tienda? Estaré encantada de leerte.'
+    }).then(setSectionData);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -14,17 +24,17 @@ export const Contacto: React.FC = () => {
       <div className="section-wrapper">
         {/* Header */}
         <div style={{ textAlign: 'center', maxWidth: '680px', margin: '0 auto 4rem auto' }}>
-          <span className="section-subtitle">CANAL DIRECTO</span>
+          <span className="section-subtitle">{sectionData.subtitle || 'CANAL DIRECTO'}</span>
           <h1 className="page-title">
-            CONTACTO & ESTUDIO <span style={{ color: '#C5A059' }}>✦</span>
+            {sectionData.title || 'CONTACTO & ESTUDIO'} <span style={{ color: '#C5A059' }}>✦</span>
           </h1>
 
           <div className="star-ornament" style={{ justifyContent: 'center', margin: '1rem 0' }}>
             <span className="star-symbol">✦</span>
           </div>
 
-          <p style={{ fontSize: '12px', color: '#5c5247', lineHeight: 1.8 }}>
-            ¿Tienes una propuesta editorial, encargo particular o consulta sobre la tienda? Estaré encantada de leerte.
+          <p style={{ fontSize: '12px', color: '#5c5247', lineHeight: 1.8, whiteSpace: 'pre-line' }}>
+            {sectionData.content || '¿Tienes una propuesta editorial...'}
           </p>
         </div>
 

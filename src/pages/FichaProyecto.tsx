@@ -1,13 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { mockProjects, mockServices } from '../data/mockData';
+import { portfolioApi } from '../services/portfolioApi';
 import type { Project, Service } from '../types';
 import { ExternalLink } from 'lucide-react';
 
 export const FichaProyecto: React.FC = () => {
   const { proyectoSlug } = useParams<{ servicioSlug: string; proyectoSlug: string }>();
-  const proyecto: Project = mockProjects.find((p: Project) => p.slug === proyectoSlug) || mockProjects[0];
-  const servicio: Service = mockServices.find((s: Service) => proyecto.serviceIds.includes(s.id)) || mockServices[0];
+  const [proyecto, setProyecto] = useState<Project | null>(null);
+  const [servicio, setServicio] = useState<Service | null>(null);
+
+  useEffect(() => {
+    async function loadData() {
+      if (!proyectoSlug) return;
+      const p = await portfolioApi.getProjectBySlug(proyectoSlug);
+      if (p) {
+        setProyecto(p);
+        const services = await portfolioApi.getServices();
+        const s = services.find((srv) => p.serviceIds?.includes(srv.id)) || services[0];
+        setServicio(s || null);
+      }
+    }
+    loadData();
+  }, [proyectoSlug]);
+
+  if (!proyecto || !servicio) {
+    return <div className="page-container"><div style={{ padding: '4rem', textAlign: 'center', color: '#5c5247' }}>Cargando obra...</div></div>;
+  }
 
   const procesoPasos = [
     { num: '01', titulo: 'BOCETO', desc: 'Exploración de la composición, la pose y el equilibrio visual.', img: '/proc-boceto.png' },

@@ -1,8 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-// Icons available if needed
+import { portfolioApi, type ContentSection } from '../services/portfolioApi';
 
 export const SobreMi: React.FC = () => {
+  const [sectionData, setSectionData] = useState<Partial<ContentSection>>({});
+
+  useEffect(() => {
+    portfolioApi.getContentSection('sobre_mi_bio', {
+      title: 'SOBRE MÍ',
+      subtitle: 'CONOCE A LA ARTISTA',
+      content: 'Hola, soy Ilustrísima Maestra, ilustradora de autor y artista conceptual especializada en la creación de universos poéticos, fantasía oscura y narrativa editorial de alto refinamiento estético.',
+      images: JSON.stringify(['/portfolio-hero.png'])
+    }).then(setSectionData);
+  }, []);
+
+  const imageList = sectionData.images ? JSON.parse(sectionData.images) : ['/portfolio-hero.png'];
+  const displayImage = imageList[0] || '/portfolio-hero.png';
+  const imgUrl = displayImage.startsWith('/') && !displayImage.startsWith('/def') ? `http://localhost:5000${displayImage}` : displayImage;
+
   return (
     <div className="page-container">
       <div className="section-wrapper">
@@ -12,7 +27,7 @@ export const SobreMi: React.FC = () => {
           <div style={{ background: '#ffffff', border: '1px solid rgba(197, 160, 89, 0.35)', padding: '1.5rem' }}>
             <div style={{ width: '100%', height: '480px', overflow: 'hidden', background: '#f5f2eb' }}>
               <img
-                src="/portfolio-hero.png"
+                src={imgUrl}
                 alt="Ilustrísima Maestra Portrait"
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
@@ -21,21 +36,17 @@ export const SobreMi: React.FC = () => {
 
           {/* Bio Text */}
           <div>
-            <span className="section-subtitle">CONOCE A LA ARTISTA</span>
+            <span className="section-subtitle">{sectionData.subtitle || 'CONOCE A LA ARTISTA'}</span>
             <h1 className="page-title" style={{ fontSize: '3rem', marginBottom: '1.25rem' }}>
-              SOBRE MÍ <span style={{ color: '#C5A059' }}>✦</span>
+              {sectionData.title || 'SOBRE MÍ'} <span style={{ color: '#C5A059' }}>✦</span>
             </h1>
 
             <div className="star-ornament" style={{ margin: '1rem 0 1.5rem 0' }}>
               <span className="star-symbol">✦</span>
             </div>
 
-            <p style={{ fontSize: '13px', color: '#5c5247', lineHeight: 1.85, marginBottom: '1.5rem' }}>
-              Hola, soy <strong>Ilustrísima Maestra</strong>, ilustradora de autor y artista conceptual especializada en la creación de universos poéticos, fantasía oscura y narrativa editorial de alto refinamiento estético.
-            </p>
-
-            <p style={{ fontSize: '12px', color: '#5c5247', lineHeight: 1.8, marginBottom: '2rem' }}>
-              Mi obra combina la delicadeza del dibujo clásico en tinta y acuarela con el poder expresivo de las herramientas digitales contemporáneas. Cada ilustración es un viaje donde la simbología mística y el detalle botánico convergen.
+            <p style={{ fontSize: '13px', color: '#5c5247', lineHeight: 1.85, marginBottom: '1.5rem', whiteSpace: 'pre-line' }}>
+              {sectionData.content || 'Hola, soy Ilustrísima Maestra...'}
             </p>
 
             <div style={{ display: 'flex', gap: '1.25rem' }}>
