@@ -14,11 +14,9 @@ export const API_BASE = getApiBase();
 export const getMediaUrl = (url?: string) => {
   if (!url) return '';
   if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  if (url.startsWith('/api/portfolio')) {
-    const base = getApiBase().replace(/\/api\/portfolio\/?$/, '');
-    return `${base}${url}`;
-  }
-  return url;
+  const base = getApiBase().replace(/\/api\/portfolio\/?$/, '');
+  const cleanUrl = url.startsWith('/') ? url : `/${url}`;
+  return `${base}${cleanUrl}`;
 };
 
 // Helper genérico para peticiones con fallback
