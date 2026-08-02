@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Trash2, Copy, CheckCircle } from 'lucide-react';
-import { adminApi } from '../services/adminApi';
+import { adminApi, getMediaUrl } from '../services/adminApi';
 import { ImageUploader } from '../components/ImageUploader';
 
 export const AdminMediaLibrary: React.FC = () => {
@@ -35,7 +35,7 @@ export const AdminMediaLibrary: React.FC = () => {
   };
 
   const handleCopyUrl = (url: string, id: string) => {
-    const fullUrl = url.startsWith('/') ? `http://localhost:5000${url}` : url;
+    const fullUrl = getMediaUrl(url);
     navigator.clipboard.writeText(fullUrl);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
@@ -65,7 +65,7 @@ export const AdminMediaLibrary: React.FC = () => {
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1.25rem' }}>
           {mediaItems.map((item) => {
-            const fullUrl = item.url.startsWith('/') ? `http://localhost:5000${item.url}` : item.url;
+            const fullUrl = getMediaUrl(item.url);
             return (
               <div
                 key={item.id}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { portfolioApi } from '../services/portfolioApi';
+import { portfolioApi, getMediaUrl } from '../services/portfolioApi';
 import type { Product } from '../types';
 import { ShoppingBag } from 'lucide-react';
 
@@ -34,7 +34,7 @@ export const FichaProducto: React.FC = () => {
           <div style={{ background: '#ffffff', border: '1px solid rgba(197, 160, 89, 0.35)', padding: '1.5rem' }}>
             <div style={{ width: '100%', height: '440px', overflow: 'hidden', background: '#f5f2eb' }}>
               <img
-                src={producto.coverImage}
+                src={getMediaUrl(producto.coverImage)}
                 alt={producto.title}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />

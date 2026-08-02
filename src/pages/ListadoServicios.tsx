@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Eye, Sparkles, Feather } from 'lucide-react';
-import { portfolioApi } from '../services/portfolioApi';
+import { portfolioApi, getMediaUrl } from '../services/portfolioApi';
 import type { Service } from '../types';
 
 export const ListadoServicios: React.FC = () => {
@@ -190,7 +190,7 @@ export const ListadoServicios: React.FC = () => {
               {/* Card Image */}
               <div style={{ width: '100%', height: '140px', overflow: 'hidden', marginBottom: '1.25rem', background: '#f5f2eb' }}>
                 <img
-                  src={(srv.coverImage || (srv as any).image || '').startsWith('/') && !(srv.coverImage || (srv as any).image || '').startsWith('/def') ? `http://localhost:5000${srv.coverImage || (srv as any).image}` : (srv.coverImage || (srv as any).image)}
+                  src={getMediaUrl(srv.coverImage || (srv as any).image)}
                   alt={srv.title}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />

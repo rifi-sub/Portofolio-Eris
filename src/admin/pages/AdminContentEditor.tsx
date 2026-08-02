@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Save, CheckCircle, Image as ImageIcon } from 'lucide-react';
-import { adminApi } from '../services/adminApi';
+import { adminApi, getMediaUrl } from '../services/adminApi';
 import { MediaPickerModal } from '../components/MediaPickerModal';
 
 export const AdminContentEditor: React.FC = () => {
@@ -256,7 +256,7 @@ export const AdminContentEditor: React.FC = () => {
               {images[0] && (
                 <div style={{ marginTop: '0.75rem', width: '120px', height: '80px', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(197,160,89,0.3)' }}>
                   <img
-                    src={images[0].startsWith('/') ? `http://localhost:5000${images[0]}` : images[0]}
+                    src={getMediaUrl(images[0])}
                     alt="Vista previa"
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}

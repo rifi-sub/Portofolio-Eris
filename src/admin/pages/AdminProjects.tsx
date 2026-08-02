@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Image as ImageIcon, X, Save } from 'lucide-react';
 import { portfolioApi } from '../../services/portfolioApi';
-import { adminApi } from '../services/adminApi';
+import { adminApi, getMediaUrl } from '../services/adminApi';
 import { MediaPickerModal } from '../components/MediaPickerModal';
 import type { Project } from '../../types';
 
@@ -80,8 +80,9 @@ export const AdminProjects: React.FC = () => {
       }
       setIsModalOpen(false);
       fetchProjects();
-    } catch (e) {
-      alert('Error al guardar la obra');
+    } catch (e: any) {
+      alert('Error al guardar la obra: ' + (e.message || 'Error desconocido'));
+      console.error('Error al guardar la obra:', e);
     }
   };
 
@@ -159,7 +160,7 @@ export const AdminProjects: React.FC = () => {
                   <td style={{ padding: '0.75rem 1rem' }}>
                     <div style={{ width: '50px', height: '50px', borderRadius: '4px', overflow: 'hidden', backgroundColor: '#000' }}>
                       <img
-                        src={p.coverImage.startsWith('/') && !p.coverImage.startsWith('/def') ? `http://localhost:5000${p.coverImage}` : p.coverImage}
+                        src={getMediaUrl(p.coverImage)}
                         alt={p.title}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}

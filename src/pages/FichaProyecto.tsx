@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { portfolioApi } from '../services/portfolioApi';
+import { portfolioApi, getMediaUrl } from '../services/portfolioApi';
 import type { Project, Service } from '../types';
 import { ExternalLink } from 'lucide-react';
 
@@ -146,7 +146,7 @@ export const FichaProyecto: React.FC = () => {
         {/* Hero Right Main Artwork */}
         <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
           <img
-            src={proyecto.coverImage}
+            src={getMediaUrl(proyecto.coverImage)}
             alt={proyecto.title}
             style={{
               maxHeight: '520px',
@@ -277,7 +277,7 @@ export const FichaProyecto: React.FC = () => {
           {/* Panoramic High-Res Artwork Banner */}
           <div style={{ width: '100%', height: '400px', overflow: 'hidden', background: '#f5f2eb', borderRadius: '4px', border: '1px solid rgba(197, 160, 89, 0.3)' }}>
             <img
-              src={proyecto.coverImage}
+              src={getMediaUrl(proyecto.coverImage)}
               alt={`${proyecto.title} Ilustración Final`}
               style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
             />

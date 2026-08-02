@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Save, X, Image as ImageIcon } from 'lucide-react';
 import { portfolioApi } from '../../services/portfolioApi';
-import { adminApi } from '../services/adminApi';
+import { adminApi, getMediaUrl } from '../services/adminApi';
 import { MediaPickerModal } from '../components/MediaPickerModal';
 import type { Product } from '../../types';
 
@@ -148,7 +148,7 @@ export const AdminProducts: React.FC = () => {
                   <td style={{ padding: '0.75rem 1rem' }}>
                     <div style={{ width: '45px', height: '45px', borderRadius: '4px', overflow: 'hidden', backgroundColor: '#000' }}>
                       <img
-                        src={p.coverImage.startsWith('/') && !p.coverImage.startsWith('/def') ? `http://localhost:5000${p.coverImage}` : p.coverImage}
+                        src={getMediaUrl(p.coverImage)}
                         alt={p.title}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />

@@ -8,6 +8,15 @@ const getApiBase = () => {
 
 const API_BASE = getApiBase();
 
+// Resuelve URLs de media relativas al dominio correcto del backend
+export function getMediaUrl(url?: string): string {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  const base = getApiBase().replace(/\/api\/portfolio\/?$/, '');
+  const cleanUrl = url.startsWith('/') ? url : `/${url}`;
+  return `${base}${cleanUrl}`;
+}
+
 function getAuthHeaders() {
   const token = localStorage.getItem('admin_token');
   return {

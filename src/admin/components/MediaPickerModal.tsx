@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { X, Check, Image as ImageIcon } from 'lucide-react';
-import { adminApi } from '../services/adminApi';
+import { adminApi, getMediaUrl } from '../services/adminApi';
 import { ImageUploader } from './ImageUploader';
 
 interface MediaPickerModalProps {
@@ -142,7 +142,7 @@ export const MediaPickerModal: React.FC<MediaPickerModalProps> = ({
                   }}
                 >
                   <img
-                    src={item.url.startsWith('/') ? `http://localhost:5000${item.url}` : item.url}
+                    src={getMediaUrl(item.url)}
                     alt={item.originalName}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
