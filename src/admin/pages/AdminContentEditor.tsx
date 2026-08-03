@@ -4,7 +4,7 @@ import { adminApi, getMediaUrl } from '../services/adminApi';
 import { MediaPickerModal } from '../components/MediaPickerModal';
 
 export const AdminContentEditor: React.FC = () => {
-  const [selectedSection, setSelectedSection] = useState<'home_hero' | 'sobre_mi_bio' | 'contacto_info'>('home_hero');
+  const [selectedSection, setSelectedSection] = useState<'home_hero' | 'sobre_mi_bio' | 'contacto_info' | 'store_hero'>('home_hero');
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
   const [content, setContent] = useState('');
@@ -31,6 +31,12 @@ export const AdminContentEditor: React.FC = () => {
       title: 'Ponte en Contacto',
       subtitle: 'Disponible para encargo y licencias',
       content: 'Email: contacto@ilustrisimamaestra.com\nInstagram: @ilustrisimamaestra\nPinterest: @ilustrisimamaestra'
+    },
+    store_hero: {
+      page: 'tienda',
+      title: 'Tienda de arte de autor',
+      subtitle: 'COLECCIONES, EDICIONES & PIEZAS ÚNICAS',
+      content: 'Explora productos ilustrados, ediciones limitadas y recursos digitales.'
     }
   };
 
@@ -101,7 +107,11 @@ export const AdminContentEditor: React.FC = () => {
           }}
         >
           Inicio / Landing
-        </button>
+          </button>
+        <button
+          onClick={() => setSelectedSection('store_hero')}
+          style={{ padding: '0.75rem 1.25rem', backgroundColor: selectedSection === 'store_hero' ? 'rgba(197,160,89,0.2)' : 'transparent', color: selectedSection === 'store_hero' ? '#F3D89D' : '#A3998D', border: '1px solid', borderColor: selectedSection === 'store_hero' ? '#C5A059' : 'transparent', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+        >Tienda</button>
 
         <button
           onClick={() => setSelectedSection('sobre_mi_bio')}

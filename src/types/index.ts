@@ -49,7 +49,7 @@ export interface Product {
   slug: string;
   title: string;
   price: number;
-  category: 'physical-print' | 'original-art' | 'merch' | 'digital-brush' | 'ebook';
+  category: string;
   isDigital: boolean;
   description: string;
   images: string[];
@@ -61,6 +61,47 @@ export interface Product {
   fileSize?: string;
   featured?: boolean;
   tags?: string[];
+  active?: boolean;
+  order?: number;
+  categoryId?: string;
+  productCategory?: ProductCategory;
+  media?: ProductMedia[];
+  reviews?: ProductReview[];
+  averageRating?: number;
+  reviewCount?: number;
+}
+
+export interface ProductCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  active?: boolean;
+  order?: number;
+  _count?: { products: number };
+}
+
+export interface ProductMedia {
+  id?: string;
+  url: string;
+  type: 'IMAGE' | 'VIDEO';
+  mimeType?: string;
+  altText?: string;
+  caption?: string;
+  order?: number;
+  isCover?: boolean;
+}
+
+export interface ProductReview {
+  id: string;
+  productId?: string;
+  author: string;
+  rating: number;
+  text: string;
+  active?: boolean;
+  order?: number;
+  createdAt?: string;
+  media?: ProductMedia[];
 }
 
 export interface WorkflowStep {

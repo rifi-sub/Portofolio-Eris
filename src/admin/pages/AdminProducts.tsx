@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Save, X, Image as ImageIcon } from 'lucide-react';
-import { portfolioApi } from '../../services/portfolioApi';
 import { adminApi, getMediaUrl } from '../services/adminApi';
 import { MediaPickerModal } from '../components/MediaPickerModal';
 import type { Product } from '../../types';
@@ -11,12 +10,15 @@ export const AdminProducts: React.FC = () => {
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showMediaPicker, setShowMediaPicker] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const data = await portfolioApi.getProducts();
-      setProducts(data);
+      const data = await adminApi.getProducts();
+      setProducts(data.map((product: any) => ({ ...product, images: typeof product.images === 'string' ? JSON.parse(product.images || '[]') : (product.images || []), tags: typeof product.tags === 'string' ? JSON.parse(product.tags || '[]') : (product.tags || []) })));
+      setCategories(await adminApi.getCategories());
     } catch (e) {
       console.error(e);
     } finally {
@@ -131,7 +133,7 @@ export const AdminProducts: React.FC = () => {
       {loading ? (
         <div style={{ textAlign: 'center', padding: '3rem', color: '#A3998D' }}>Cargando productos...</div>
       ) : (
-        <div style={{ backgroundColor: '#12100E', border: '1px solid rgba(197,160,89,0.25)', borderRadius: '10px', overflow: 'hidden' }}>
+       <div style={{ backgroundColor: '#12100E', border: '1px solid rgba(197,160,89,0.25)', borderRadius: '10px', overflow: 'hidden' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(197,160,89,0.2)', backgroundColor: 'rgba(197,160,89,0.05)', color: '#C5A059' }}>
@@ -143,8 +145,8 @@ export const AdminProducts: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {products.map((p: any) => (
-                <tr key={p.id} style={{ borderBottom: '1px solid rgba(197,160,89,0.1)' }}>
+               {products.map((p: any, productIndex) => (
+                 <tr key={p.id} draggable onDragStart={() => setDraggedIndex(productIndex)} onDragOver={e => e.preventDefault()} onDrop={async () => { if (draggedIndex === null || draggedIndex === productIndex) return; const next = [...products]; const [item] = next.splice(draggedIndex, 1); next.splice(productIndex, 0, item); setProducts(next); setDraggedIndex(null); await adminApi.reorderProducts(next.map((product, order) => ({ id: product.id, order }))); }} style={{ borderBottom: '1px solid rgba(197,160,89,0.1)', cursor: 'grab' }}>
                   <td style={{ padding: '0.75rem 1rem' }}>
                     <div style={{ width: '45px', height: '45px', borderRadius: '4px', overflow: 'hidden', backgroundColor: '#000' }}>
                       <img
@@ -154,8 +156,8 @@ export const AdminProducts: React.FC = () => {
                       />
                     </div>
                   </td>
-                  <td style={{ padding: '1rem', fontWeight: 600, color: '#F3D89D' }}>
-                    {p.title}
+                 <td style={{ padding: '1rem', fontWeight: 600, color: '#F3D89D' }}>
+                     {p.title}<small style={{ display: 'block', color: '#A3998D', fontWeight: 400 }}>{p.productCategory?.name || p.category}</small>
                   </td>
                   <td style={{ padding: '1rem', color: '#E5D6C5', fontWeight: 700 }}>
                     {p.price} €
@@ -220,6 +222,10 @@ export const AdminProducts: React.FC = () => {
 
             <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div>
+                <label style={{ display: 'block', color: '#C5A059', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem' }}>CATEGORÍA</label>
+                <select value={editingProduct.categoryId || ''} onChange={e => setEditingProduct({ ...editingProduct, categoryId: e.target.value || undefined })} style={{ width: '100%', padding: '.75rem', background: '#090807', color: '#fff', border: '1px solid rgba(197,160,89,.3)', marginBottom: '1rem' }}><option value="">Sin categoría</option>{categories.map(category => <option key={category.id} value={category.id}>{category.name}</option>)}</select>
+              </div>
+              <div>
                 <label style={{ display: 'block', color: '#C5A059', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem' }}>TÍTULO DEL PRODUCTO *</label>
                 <input
                   type="text"
@@ -229,6 +235,8 @@ export const AdminProducts: React.FC = () => {
                   style={{ width: '100%', padding: '0.75rem', backgroundColor: '#090807', border: '1px solid rgba(197,160,89,0.3)', borderRadius: '6px', color: '#fff', outline: 'none', boxSizing: 'border-box' }}
                 />
               </div>
+
+              {editingProduct.id && <div><label style={{ display: 'block', color: '#C5A059', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem' }}>GALERÍA MULTIMEDIA</label><input type="file" multiple accept="image/*,video/mp4,video/webm,video/quicktime" onChange={async e => { if (e.target.files) { try { await adminApi.uploadProductMedia(editingProduct.id!, e.target.files); alert('Multimedia subida. Cierra y vuelve a abrir para actualizar la galería.'); } catch (error: any) { alert(error.message); } } }} style={{ color: '#A3998D' }} /><small style={{ display: 'block', color: '#A3998D', marginTop: '.4rem' }}>Admite imágenes y vídeos de hasta 200 MB.</small></div>}
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>

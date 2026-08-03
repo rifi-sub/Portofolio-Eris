@@ -1,4 +1,4 @@
-import type { Service, Project, Product, WorkflowStep, FAQItem } from '../types';
+import type { Service, Project, Product, ProductCategory, ProductReview, WorkflowStep, FAQItem } from '../types';
 import { mockServices, mockProjects, mockProducts, mockWorkflowSteps, mockFAQs } from '../data/mockData';
 
 export const getApiBase = () => {
@@ -72,7 +72,10 @@ function parseProduct(p: any): Product {
   return {
     ...p,
     images: typeof p.images === 'string' ? JSON.parse(p.images || '[]') : (p.images || []),
-    tags: typeof p.tags === 'string' ? JSON.parse(p.tags || '[]') : (p.tags || [])
+    tags: typeof p.tags === 'string' ? JSON.parse(p.tags || '[]') : (p.tags || []),
+    media: (p.media || []).map((m: any) => ({ ...m, type: String(m.type).toUpperCase() === 'VIDEO' ? 'VIDEO' : 'IMAGE' })),
+    reviews: p.reviews || [],
+    productCategory: p.productCategory || undefined
   };
 }
 
@@ -132,6 +135,10 @@ export const portfolioApi = {
     return raw.map(parseProduct);
   },
 
+  getCategories: async (): Promise<ProductCategory[]> => {
+    return fetchWithFallback<ProductCategory[]>(`${API_BASE}/categories`, []);
+  },
+
   getProductBySlug: async (slug: string): Promise<Product | undefined> => {
     try {
       const res = await fetch(`${API_BASE}/products/${slug}`);
@@ -155,6 +162,16 @@ export const portfolioApi = {
 
   getReviews: async (): Promise<Review[]> => {
     return fetchWithFallback<Review[]>(`${API_BASE}/reviews`, []);
+  },
+
+  getProductReviews: async (productId: string): Promise<ProductReview[]> => {
+    try {
+      const res = await fetch(`${API_BASE}/products/${productId}/reviews`);
+      if (res.ok) return res.json();
+    } catch (e) {
+      // ignore
+    }
+    return [];
   },
 
   sendCommissionRequest: async (data: any) => {

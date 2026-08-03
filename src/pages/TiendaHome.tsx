@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { portfolioApi, getMediaUrl } from '../services/portfolioApi';
-import type { Product } from '../types';
+import type { Product, ProductCategory } from '../types';
 import { Search, ShoppingBag, PackageCheck, Truck, ShieldCheck, HelpCircle } from 'lucide-react';
 
 export const TiendaHome: React.FC = () => {
@@ -9,18 +9,16 @@ export const TiendaHome: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [categoriaSel, setCategoriaSel] = useState<string>('todos');
   const [precioSel, setPrecioSel] = useState<string>('todos');
+  const [categories, setCategories] = useState<ProductCategory[]>([]);
+  const [hero, setHero] = useState<any>({});
 
   useEffect(() => {
     portfolioApi.getProducts().then(setProducts);
+    portfolioApi.getCategories().then(setCategories);
+    portfolioApi.getContentSection('store_hero').then(setHero);
   }, []);
 
-  const categorias = [
-    { id: 'todos', nombre: 'TODAS LAS OBRAS' },
-    { id: 'fisico', nombre: 'LÁMINAS & IMPRESIONES' },
-    { id: 'digital', nombre: 'DESCARGAS DIGITALES' },
-    { id: 'artbook', nombre: 'LIBROS & ARTBOOKS' },
-    { id: 'original', nombre: 'ÓLEOS ORIGINALES' }
-  ];
+  const categorias = [{ id: 'todos', nombre: 'TODAS LAS OBRAS' }, ...categories.map(category => ({ id: category.slug, nombre: category.name }))];
 
   const productosFiltrados = products.filter((p: Product) => {
     // 1. Búsqueda por título
@@ -29,10 +27,7 @@ export const TiendaHome: React.FC = () => {
 
     // 2. Filtro Categoría
     let coincideCat = true;
-    if (categoriaSel === 'digital') coincideCat = p.isDigital;
-    if (categoriaSel === 'fisico') coincideCat = !p.isDigital && p.category === 'physical-print';
-    if (categoriaSel === 'artbook') coincideCat = p.category === 'merch' || p.title.toLowerCase().includes('artbook') || p.title.toLowerCase().includes('libro');
-    if (categoriaSel === 'original') coincideCat = p.category === 'original-art';
+    if (categoriaSel !== 'todos') coincideCat = p.productCategory?.slug === categoriaSel || p.category === categoriaSel;
 
     // 3. Filtro Precio
     let coincidePrecio = true;
@@ -48,12 +43,12 @@ export const TiendaHome: React.FC = () => {
       <div className="section-wrapper">
         {/* Header de la Tienda */}
         <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-          <span className="section-subtitle">OBRAS DE AUTOR & EDICIONES LIMITADAS</span>
-          <h1 className="page-title" style={{ fontSize: '3.25rem' }}>
-            TIENDA DE ARTE DE AUTOR <span style={{ color: '#C5A059' }}>✦</span>
-          </h1>
-          <p style={{ maxWidth: '620px', margin: '1rem auto 0 auto', fontSize: '13px', color: '#5c5247', lineHeight: 1.8 }}>
-            Explora colecciones exclusivas de láminas Fine Art impresas en papel de algodón de 310g, piezas al óleo originales y recursos digitales para creadores.
+           <span className="section-subtitle">{hero.subtitle || 'OBRAS DE AUTOR & EDICIONES LIMITADAS'}</span>
+           <h1 className="page-title" style={{ fontSize: '3.25rem' }}>
+             {hero.title || 'TIENDA DE ARTE DE AUTOR'} <span style={{ color: '#C5A059' }}>✦</span>
+           </h1>
+           <p style={{ maxWidth: '620px', margin: '1rem auto 0 auto', fontSize: '13px', color: '#5c5247', lineHeight: 1.8 }}>
+             {hero.content || 'Explora colecciones exclusivas de láminas Fine Art impresas en papel de algodón de 310g, piezas al óleo originales y recursos digitales para creadores.'}
           </p>
         </div>
 

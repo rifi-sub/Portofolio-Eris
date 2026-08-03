@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Compass } from 'lucide-react';
+import { Compass, ShoppingBag } from 'lucide-react';
+import { useCart } from '../../shop/CartContext';
 import './Header.css';
 
 export const Header: React.FC = () => {
   const location = useLocation();
+  const { totalItems } = useCart();
 
   // On Home page, Home.tsx renders its own standalone overlay navbar
   if (location.pathname === '/') return null;
@@ -103,6 +105,10 @@ export const Header: React.FC = () => {
           >
             <Compass size={16} />
           </div>
+        </Link>
+        <Link to="/cesta" aria-label="Cesta" style={{ position: 'relative', color: '#C5A059' }}>
+          <ShoppingBag size={18} />
+          {totalItems > 0 && <span style={{ position: 'absolute', top: -10, right: -10, minWidth: 16, height: 16, borderRadius: '50%', background: '#C5A059', color: '#fff', fontSize: 9, display: 'grid', placeItems: 'center' }}>{totalItems}</span>}
         </Link>
       </div>
     </header>

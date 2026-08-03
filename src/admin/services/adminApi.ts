@@ -117,6 +117,12 @@ export const adminApi = {
   },
 
   // Products CRUD
+  getProducts: async () => {
+    const res = await fetch(`${API_BASE}/admin/products`, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error('Error al obtener productos');
+    return res.json();
+  },
+
   createProduct: async (data: any) => {
     const res = await fetch(`${API_BASE}/admin/products`, {
       method: 'POST',
@@ -300,6 +306,106 @@ export const adminApi = {
       body: JSON.stringify({ active })
     });
     if (!res.ok) throw new Error('Error al cambiar visibilidad');
+    return res.json();
+  },
+
+  getCategories: async () => {
+    const res = await fetch(`${API_BASE}/admin/categories`, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error('Error al obtener categorías');
+    return res.json();
+  },
+
+  createCategory: async (data: any) => {
+    const res = await fetch(`${API_BASE}/admin/categories`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
+    if (!res.ok) throw new Error('Error al crear categoría');
+    return res.json();
+  },
+
+  updateCategory: async (id: string, data: any) => {
+    const res = await fetch(`${API_BASE}/admin/categories/${id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) });
+    if (!res.ok) throw new Error('Error al actualizar categoría');
+    return res.json();
+  },
+
+  deleteCategory: async (id: string) => {
+    const res = await fetch(`${API_BASE}/admin/categories/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({}));
+      throw new Error(error.error || 'Error al eliminar categoría');
+    }
+    return res.json();
+  },
+
+  reorderCategories: async (items: any[]) => {
+    const res = await fetch(`${API_BASE}/admin/categories/reorder`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify({ items }) });
+    if (!res.ok) throw new Error('Error al reordenar categorías');
+    return res.json();
+  },
+
+  reorderProducts: async (items: any[]) => {
+    const res = await fetch(`${API_BASE}/admin/products/reorder`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify({ items }) });
+    if (!res.ok) throw new Error('Error al reordenar productos');
+    return res.json();
+  },
+
+  uploadProductMedia: async (productId: string, files: FileList | File[]) => {
+    const token = localStorage.getItem('admin_token');
+    const formData = new FormData();
+    Array.from(files).forEach(file => formData.append('files', file));
+    const res = await fetch(`${API_BASE}/admin/products/${productId}/media`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData
+    });
+    if (!res.ok) throw new Error('Error al subir multimedia del producto');
+    return res.json();
+  },
+
+  updateProductMedia: async (productId: string, mediaId: string, data: any) => {
+    const res = await fetch(`${API_BASE}/admin/products/${productId}/media/${mediaId}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) });
+    if (!res.ok) throw new Error('Error al actualizar multimedia');
+    return res.json();
+  },
+
+  deleteProductMedia: async (productId: string, mediaId: string) => {
+    const res = await fetch(`${API_BASE}/admin/products/${productId}/media/${mediaId}`, { method: 'DELETE', headers: getAuthHeaders() });
+    if (!res.ok) throw new Error('Error al eliminar multimedia');
+    return res.json();
+  },
+
+  getProductReviews: async () => {
+    const res = await fetch(`${API_BASE}/admin/product-reviews`, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error('Error al obtener reseñas de productos');
+    return res.json();
+  },
+
+  createProductReview: async (productId: string, data: any) => {
+    const res = await fetch(`${API_BASE}/admin/products/${productId}/reviews`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
+    if (!res.ok) throw new Error('Error al crear reseña de producto');
+    return res.json();
+  },
+
+  updateProductReview: async (id: string, data: any) => {
+    const res = await fetch(`${API_BASE}/admin/product-reviews/${id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) });
+    if (!res.ok) throw new Error('Error al actualizar reseña de producto');
+    return res.json();
+  },
+
+  deleteProductReview: async (id: string) => {
+    const res = await fetch(`${API_BASE}/admin/product-reviews/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+    if (!res.ok) throw new Error('Error al eliminar reseña de producto');
+    return res.json();
+  },
+
+  getOrders: async () => {
+    const res = await fetch(`${API_BASE}/admin/orders`, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error('Error al obtener pedidos');
+    return res.json();
+  },
+
+  updateOrderStatus: async (id: string, data: any) => {
+    const res = await fetch(`${API_BASE}/admin/orders/${id}/status`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) });
+    if (!res.ok) throw new Error('Error al actualizar pedido');
     return res.json();
   }
 };

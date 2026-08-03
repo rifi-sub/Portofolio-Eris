@@ -14,6 +14,8 @@ import { SobreMi } from '../pages/SobreMi';
 import { Contacto } from '../pages/Contacto';
 import { FAQ } from '../pages/FAQ';
 import { Resenas } from '../pages/Resenas';
+import { Cesta } from '../pages/Cesta';
+import { CartProvider } from '../shop/CartContext';
 
 // Admin imports
 import { AdminAuthProvider } from '../admin/context/AdminAuthContext';
@@ -28,6 +30,8 @@ import { AdminProducts } from '../admin/pages/AdminProducts';
 import { AdminMediaLibrary } from '../admin/pages/AdminMediaLibrary';
 import { AdminReviews } from '../admin/pages/AdminReviews';
 import { AdminCommissions } from '../admin/pages/AdminCommissions';
+import { AdminCategories } from '../admin/pages/AdminCategories';
+import { AdminOrders } from '../admin/pages/AdminOrders';
 
 // Wrapper that renders Layout with nested routes via <Outlet>
 const WithLayout: React.FC = () => (
@@ -49,6 +53,7 @@ export const AppRouter: React.FC = () => {
   return (
     <AdminAuthProvider>
       <BrowserRouter>
+        <CartProvider>
         <Routes>
           {/* Home: owns its nav, footer and full scroll height — NO Layout wrapper */}
           <Route path="/" element={<Home />} />
@@ -65,6 +70,7 @@ export const AppRouter: React.FC = () => {
 
             <Route path="/tienda" element={<TiendaHome />} />
             <Route path="/tienda/:productoSlug" element={<FichaProducto />} />
+            <Route path="/cesta" element={<Cesta />} />
 
             <Route path="/sobre-mi" element={<SobreMi />} />
             <Route path="/contacto" element={<Contacto />} />
@@ -82,13 +88,15 @@ export const AppRouter: React.FC = () => {
             <Route path="/admin/content" element={<AdminContentEditor />} />
             <Route path="/admin/services" element={<AdminServices />} />
             <Route path="/admin/products" element={<AdminProducts />} />
+            <Route path="/admin/categories" element={<AdminCategories />} />
+            <Route path="/admin/orders" element={<AdminOrders />} />
             <Route path="/admin/media" element={<AdminMediaLibrary />} />
             <Route path="/admin/reviews" element={<AdminReviews />} />
             <Route path="/admin/commissions" element={<AdminCommissions />} />
           </Route>
         </Routes>
+        </CartProvider>
       </BrowserRouter>
     </AdminAuthProvider>
   );
 };
-

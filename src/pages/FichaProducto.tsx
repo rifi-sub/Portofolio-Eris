@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { portfolioApi, getMediaUrl } from '../services/portfolioApi';
+import { portfolioApi } from '../services/portfolioApi';
 import type { Product } from '../types';
 import { ShoppingBag } from 'lucide-react';
+import { ProductGallery } from '../components/shop/ProductGallery';
+import { ProductReviews } from '../components/shop/ProductReviews';
+import { useCart } from '../shop/CartContext';
 
 export const FichaProducto: React.FC = () => {
   const { productoSlug } = useParams<{ productoSlug: string }>();
   const [producto, setProducto] = useState<Product | null>(null);
+  const { addItem } = useCart();
 
   useEffect(() => {
     if (productoSlug) {
@@ -31,15 +35,7 @@ export const FichaProducto: React.FC = () => {
         {/* Product Details Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '3.5rem', alignItems: 'start' }}>
           {/* Product Image Gallery */}
-          <div style={{ background: '#ffffff', border: '1px solid rgba(197, 160, 89, 0.35)', padding: '1.5rem' }}>
-            <div style={{ width: '100%', height: '440px', overflow: 'hidden', background: '#f5f2eb' }}>
-              <img
-                src={getMediaUrl(producto.coverImage)}
-                alt={producto.title}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-            </div>
-          </div>
+          <ProductGallery title={producto.title} coverImage={producto.coverImage} media={producto.media} />
 
           {/* Product Information */}
           <div>
@@ -79,7 +75,7 @@ export const FichaProducto: React.FC = () => {
 
             {/* Purchase CTA */}
             <div style={{ display: 'flex', gap: '1rem' }}>
-              <button className="btn-gold-primary" style={{ flex: 1 }}>
+               <button className="btn-gold-primary" style={{ flex: 1 }} onClick={() => { addItem(producto); alert('Producto añadido a la cesta'); }}>
                 <ShoppingBag size={16} />
                 <span>AÑADIR A LA CESTA</span>
               </button>
@@ -89,6 +85,7 @@ export const FichaProducto: React.FC = () => {
             </div>
           </div>
         </div>
+        <ProductReviews reviews={producto.reviews} average={producto.averageRating} count={producto.reviewCount} />
       </div>
     </div>
   );
