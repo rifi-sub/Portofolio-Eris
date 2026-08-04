@@ -76,8 +76,8 @@ export const AdminProducts: React.FC = () => {
       }
       setIsModalOpen(false);
       fetchProducts();
-    } catch (e) {
-      alert('Error al guardar producto');
+    } catch (e: any) {
+      alert(e.message || 'Error al guardar producto');
     }
   };
 

@@ -13,10 +13,13 @@ export const API_BASE = getApiBase();
 
 export const getMediaUrl = (url?: string) => {
   if (!url) return '';
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  const base = getApiBase().replace(/\/api\/portfolio\/?$/, '');
-  const cleanUrl = url.startsWith('/') ? url : `/${url}`;
-  return `${base}${cleanUrl}`;
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) return url;
+  if (url.startsWith('/api/') || url.startsWith('api/')) {
+    const base = getApiBase().replace(/\/api\/portfolio\/?$/, '');
+    const cleanUrl = url.startsWith('/') ? url : `/${url}`;
+    return `${base}${cleanUrl}`;
+  }
+  return url;
 };
 
 // Helper genérico para peticiones con fallback

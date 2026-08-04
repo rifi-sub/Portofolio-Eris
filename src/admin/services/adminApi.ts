@@ -11,10 +11,13 @@ const API_BASE = getApiBase();
 // Resuelve URLs de media relativas al dominio correcto del backend
 export function getMediaUrl(url?: string): string {
   if (!url) return '';
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  const base = getApiBase().replace(/\/api\/portfolio\/?$/, '');
-  const cleanUrl = url.startsWith('/') ? url : `/${url}`;
-  return `${base}${cleanUrl}`;
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) return url;
+  if (url.startsWith('/api/') || url.startsWith('api/')) {
+    const base = getApiBase().replace(/\/api\/portfolio\/?$/, '');
+    const cleanUrl = url.startsWith('/') ? url : `/${url}`;
+    return `${base}${cleanUrl}`;
+  }
+  return url;
 }
 
 function getAuthHeaders() {
@@ -63,7 +66,10 @@ export const adminApi = {
       headers: getAuthHeaders(),
       body: JSON.stringify(data)
     });
-    if (!res.ok) throw new Error('Error al crear obra');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Error al crear obra');
+    }
     return res.json();
   },
 
@@ -73,7 +79,10 @@ export const adminApi = {
       headers: getAuthHeaders(),
       body: JSON.stringify(data)
     });
-    if (!res.ok) throw new Error('Error al actualizar obra');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Error al actualizar obra');
+    }
     return res.json();
   },
 
@@ -129,7 +138,10 @@ export const adminApi = {
       headers: getAuthHeaders(),
       body: JSON.stringify(data)
     });
-    if (!res.ok) throw new Error('Error al crear producto');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Error al crear producto');
+    }
     return res.json();
   },
 
@@ -139,7 +151,10 @@ export const adminApi = {
       headers: getAuthHeaders(),
       body: JSON.stringify(data)
     });
-    if (!res.ok) throw new Error('Error al actualizar producto');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Error al actualizar producto');
+    }
     return res.json();
   },
 
