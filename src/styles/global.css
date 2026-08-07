@@ -316,3 +316,41 @@ a {
   margin: 0 auto;
   padding: 0 1.5rem;
 }
+
+/* Card Luxury & Clickable Store Cards */
+.card-luxury {
+  background: #ffffff;
+  border: 1px solid rgba(197, 160, 89, 0.35);
+  padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-product-clickable {
+  cursor: pointer;
+}
+
+.card-product-clickable:hover {
+  border-color: rgba(197, 160, 89, 0.85);
+  box-shadow: 0 14px 36px rgba(197, 160, 89, 0.16);
+  transform: translateY(-4px);
+}
+
+.card-product-clickable:hover .product-image-container img {
+  transform: scale(1.04);
+}
+
+.btn-zoom-hover:hover {
+  background: rgba(197, 160, 89, 0.95) !important;
+  color: #ffffff !important;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

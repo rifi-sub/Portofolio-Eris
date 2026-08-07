@@ -1,16 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { portfolioApi, getMediaUrl } from '../services/portfolioApi';
 import type { Product, ProductCategory } from '../types';
-import { Search, ShoppingBag, PackageCheck, Truck, ShieldCheck, HelpCircle } from 'lucide-react';
+import { Search, ShoppingBag, PackageCheck, Truck, ShieldCheck, HelpCircle, Maximize2 } from 'lucide-react';
+import { ImageLightboxModal } from '../components/shop/ImageLightboxModal';
 
 export const TiendaHome: React.FC = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [categoriaSel, setCategoriaSel] = useState<string>('todos');
   const [precioSel, setPrecioSel] = useState<string>('todos');
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   const [hero, setHero] = useState<any>({});
+
+  // Lightbox Modal state
+  const [lightbox, setLightbox] = useState<{
+    isOpen: boolean;
+    images: Array<{ url: string; altText?: string }>;
+    title: string;
+  }>({
+    isOpen: false,
+    images: [],
+    title: '',
+  });
 
   useEffect(() => {
     portfolioApi.getProducts().then(setProducts);
@@ -21,7 +34,7 @@ export const TiendaHome: React.FC = () => {
   const categorias = [{ id: 'todos', nombre: 'TODAS LAS OBRAS' }, ...categories.map(category => ({ id: category.slug, nombre: category.name }))];
 
   const productosFiltrados = products.filter((p: Product) => {
-    // 1. Búsqueda por título
+    // 1. Búsqueda por título o descripción
     const coincideTexto = p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           p.description.toLowerCase().includes(searchTerm.toLowerCase());
 
@@ -37,6 +50,19 @@ export const TiendaHome: React.FC = () => {
 
     return coincideTexto && coincideCat && coincidePrecio;
   });
+
+  const openLightbox = (product: Product, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const mediaEntries = product.media && product.media.length > 0
+      ? product.media.map(m => ({ url: m.url, altText: m.altText || product.title }))
+      : [{ url: product.coverImage, altText: product.title }];
+
+    setLightbox({
+      isOpen: true,
+      images: mediaEntries,
+      title: product.title,
+    });
+  };
 
   return (
     <div className="page-container">
@@ -134,7 +160,19 @@ export const TiendaHome: React.FC = () => {
               const badgeText = prod.isDigital ? 'DIGITAL HD' : isLimited ? `EDICIÓN LIMITADA (${prod.stock} ud)` : 'FINE ART';
 
               return (
-                <div key={prod.id} className="card-luxury" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div
+                  key={prod.id}
+                  className="card-luxury card-product-clickable"
+                  onClick={() => navigate(`/tienda/${prod.slug}`)}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    cursor: 'pointer',
+                    position: 'relative',
+                    transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
+                  }}
+                >
                   <div>
                     {/* Header Card Meta */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '10px', color: '#C5A059', marginBottom: '0.75rem', fontWeight: 600 }}>
@@ -142,13 +180,61 @@ export const TiendaHome: React.FC = () => {
                       <span className="badge-gold" style={{ fontSize: '8px' }}>{badgeText}</span>
                     </div>
 
-                    {/* Imagen del Producto */}
-                    <div style={{ width: '100%', height: '260px', overflow: 'hidden', background: '#f5f2eb', marginBottom: '1.25rem', border: '1px solid rgba(197,160,89,0.2)' }}>
+                    {/* Imagen del Producto - Padded Frame & Contain Fit */}
+                    <div
+                      className="product-image-container"
+                      style={{
+                        position: 'relative',
+                        width: '100%',
+                        height: '280px',
+                        overflow: 'hidden',
+                        background: '#f5f2eb',
+                        marginBottom: '1.25rem',
+                        border: '1px solid rgba(197,160,89,0.25)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '0.5rem',
+                      }}
+                    >
                       <img
                         src={coverUrl}
                         alt={prod.title}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        style={{
+                          maxWidth: '100%',
+                          maxHeight: '100%',
+                          objectFit: 'contain',
+                          transition: 'transform 0.35s ease',
+                        }}
                       />
+
+                      {/* Botón flotante para ampliar imagen */}
+                      <button
+                        onClick={(e) => openLightbox(prod, e)}
+                        title="Ampliar fotografía completa"
+                        aria-label="Ampliar fotografía"
+                        style={{
+                          position: 'absolute',
+                          top: '0.75rem',
+                          right: '0.75rem',
+                          background: 'rgba(20, 15, 10, 0.75)',
+                          border: '1px solid rgba(197, 160, 89, 0.5)',
+                          color: '#F3D89D',
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          opacity: 0.9,
+                          transition: 'all 0.2s ease',
+                          zIndex: 5,
+                        }}
+                        className="btn-zoom-hover"
+                      >
+                        <Maximize2 size={14} />
+                      </button>
                     </div>
 
                     {/* Título & Descripción */}
@@ -169,16 +255,27 @@ export const TiendaHome: React.FC = () => {
                       </span>
                     </div>
 
-                    <Link to={`/tienda/${prod.slug}`} className="btn-gold-primary" style={{ padding: '0.5rem 1rem', fontSize: '10px' }}>
+                    <div
+                      className="btn-gold-primary"
+                      style={{ padding: '0.5rem 1rem', fontSize: '10px', pointerEvents: 'none' }}
+                    >
                       <ShoppingBag size={13} />
                       <span>VER OBRA</span>
-                    </Link>
+                    </div>
                   </div>
                 </div>
               );
             })}
           </div>
         )}
+
+        {/* Visor Lightbox Modal de Imágenes */}
+        <ImageLightboxModal
+          isOpen={lightbox.isOpen}
+          onClose={() => setLightbox({ ...lightbox, isOpen: false })}
+          images={lightbox.images}
+          title={lightbox.title}
+        />
 
         {/* Sección Informativa: CÓMO HACER UN PEDIDO */}
         <div style={{ background: '#ffffff', border: '1px solid rgba(197, 160, 89, 0.35)', padding: '3.5rem 3rem' }}>

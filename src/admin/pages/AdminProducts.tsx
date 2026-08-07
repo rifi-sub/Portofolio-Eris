@@ -236,7 +236,38 @@ export const AdminProducts: React.FC = () => {
                 />
               </div>
 
-              {editingProduct.id && <div><label style={{ display: 'block', color: '#C5A059', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem' }}>GALERÍA MULTIMEDIA</label><input type="file" multiple accept="image/*,video/mp4,video/webm,video/quicktime" onChange={async e => { if (e.target.files) { try { await adminApi.uploadProductMedia(editingProduct.id!, e.target.files); alert('Multimedia subida. Cierra y vuelve a abrir para actualizar la galería.'); } catch (error: any) { alert(error.message); } } }} style={{ color: '#A3998D' }} /><small style={{ display: 'block', color: '#A3998D', marginTop: '.4rem' }}>Admite imágenes y vídeos de hasta 200 MB.</small></div>}
+              {editingProduct.id && (
+                <div>
+                  <label style={{ display: 'block', color: '#C5A059', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem' }}>
+                    GALERÍA MULTIMEDIA (IMÁGENES & VÍDEOS)
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowMediaPicker(true);
+                    }}
+                    style={{
+                      padding: '0.75rem 1.25rem',
+                      backgroundColor: 'rgba(197,160,89,0.15)',
+                      border: '1px solid #C5A059',
+                      color: '#F3D89D',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      fontSize: '0.85rem',
+                      fontWeight: 600
+                    }}
+                  >
+                    <ImageIcon size={16} />
+                    <span>Añadir a la Galería (Elegir de Biblioteca o Subir Nuevo)</span>
+                  </button>
+                  <small style={{ display: 'block', color: '#A3998D', marginTop: '.4rem' }}>
+                    Selecciona imágenes o vídeos existentes de la biblioteca o sube archivos nuevos desde tu dispositivo.
+                  </small>
+                </div>
+              )}
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
@@ -273,7 +304,7 @@ export const AdminProducts: React.FC = () => {
                     onClick={() => setShowMediaPicker(true)}
                     style={{ padding: '0.75rem 1rem', backgroundColor: 'rgba(197,160,89,0.2)', border: '1px solid #C5A059', color: '#F3D89D', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
                   >
-                    <ImageIcon size={16} /> Elegir
+                    <ImageIcon size={16} /> Cambiar / Elegir
                   </button>
                 </div>
               </div>
@@ -310,9 +341,20 @@ export const AdminProducts: React.FC = () => {
 
       <MediaPickerModal
         isOpen={showMediaPicker}
+        multiple={true}
         onClose={() => setShowMediaPicker(false)}
         onSelectUrl={(url) => {
           if (editingProduct) setEditingProduct({ ...editingProduct, coverImage: url });
+        }}
+        onSelectUrls={async (urls) => {
+          if (editingProduct?.id && urls.length > 0) {
+            try {
+              await adminApi.addMediaFromLibrary(editingProduct.id, urls);
+              fetchProducts();
+            } catch (e: any) {
+              console.error(e);
+            }
+          }
         }}
       />
     </div>

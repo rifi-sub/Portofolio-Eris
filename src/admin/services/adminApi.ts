@@ -376,6 +376,16 @@ export const adminApi = {
     return res.json();
   },
 
+  addMediaFromLibrary: async (productId: string, urls: string[]) => {
+    const res = await fetch(`${API_BASE}/admin/products/${productId}/media-from-library`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ urls })
+    });
+    if (!res.ok) throw new Error('Error al añadir media desde biblioteca');
+    return res.json();
+  },
+
   updateProductMedia: async (productId: string, mediaId: string, data: any) => {
     const res = await fetch(`${API_BASE}/admin/products/${productId}/media/${mediaId}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) });
     if (!res.ok) throw new Error('Error al actualizar multimedia');
