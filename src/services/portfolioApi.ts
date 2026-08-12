@@ -14,12 +14,38 @@ export const API_BASE = getApiBase();
 export const getMediaUrl = (url?: string) => {
   if (!url) return '';
   if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) return url;
+
+  // Local frontend static assets
+  if (
+    url.startsWith('/assets/') ||
+    url.startsWith('/def/') ||
+    url === '/portfolio-hero.png' ||
+    url.startsWith('/srv-') ||
+    url.startsWith('/proc-') ||
+    url.startsWith('/bg-hero') ||
+    url === '/favicon.svg' ||
+    url === '/icons.svg'
+  ) {
+    return url;
+  }
+
+  const base = getApiBase().replace(/\/api\/portfolio\/?$/, '');
+
   if (url.startsWith('/api/') || url.startsWith('api/')) {
-    const base = getApiBase().replace(/\/api\/portfolio\/?$/, '');
     const cleanUrl = url.startsWith('/') ? url : `/${url}`;
     return `${base}${cleanUrl}`;
   }
-  return url;
+
+  if (url.startsWith('/uploads/') || url.startsWith('uploads/')) {
+    const cleanUrl = url.startsWith('/') ? url : `/${url}`;
+    return `${base}/api${cleanUrl}`;
+  }
+
+  if (url.startsWith('/')) {
+    return `${base}${url}`;
+  }
+
+  return `${base}/api/portfolio/media/file/${url}`;
 };
 
 // Helper genérico para peticiones con fallback
