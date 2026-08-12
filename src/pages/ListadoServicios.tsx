@@ -1,15 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Eye, Sparkles, Feather } from 'lucide-react';
-import { portfolioApi, getMediaUrl } from '../services/portfolioApi';
-import type { Service } from '../types';
+import { Eye, Sparkles, Feather } from 'lucide-react';
 
 export const ListadoServicios: React.FC = () => {
-  const [services, setServices] = useState<Service[]>([]);
-
-  useEffect(() => {
-    portfolioApi.getServices().then(setServices);
-  }, []);
 
   return (
     <div style={{ backgroundColor: '#fcfaf7', color: '#2c251e', minHeight: '100vh', fontFamily: 'var(--font-sans)' }}>
@@ -117,137 +110,6 @@ export const ListadoServicios: React.FC = () => {
         </div>
       </section>
       {/* END: Hero Section */}
-
-      {/* BEGIN: Services Carousel Section */}
-      <section style={{ maxWidth: '1360px', margin: '0 auto', padding: '2rem 3rem 4rem 3rem' }}>
-        {/* Section Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem' }}>
-          <div>
-            <span style={{ fontSize: '10px', letterSpacing: '0.3em', color: '#C5A059', textTransform: 'uppercase', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>
-              SERVICIOS
-            </span>
-            <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', letterSpacing: '0.05em', color: '#1a1510', fontWeight: 400 }}>
-              Explora mis áreas de especialización <span style={{ color: '#C5A059', fontSize: '1.2rem' }}>✦</span>
-            </h2>
-          </div>
-
-          <Link
-            to="/portfolio/presupuesto"
-            style={{
-              fontSize: '10px',
-              letterSpacing: '0.25em',
-              color: '#C5A059',
-              textTransform: 'uppercase',
-              fontWeight: 600,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-            }}
-          >
-            <span>VER TODOS LOS SERVICIOS</span>
-            <span>→</span>
-          </Link>
-        </div>
-
-        {/* Services Cards Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1.25rem', position: 'relative' }}>
-          {services.map((srv) => (
-            <div
-              key={srv.id}
-              style={{
-                background: '#ffffff',
-                border: '1px solid rgba(197, 160, 89, 0.3)',
-                padding: '1.25rem',
-                display: 'flex',
-                flexDirection: 'column',
-                transition: 'all 0.3s ease',
-              }}
-              className="card-hover-gold"
-            >
-              {/* Card Top Meta */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: '#C5A059', marginBottom: '0.75rem', fontWeight: 600 }}>
-                <span>{srv.id}</span>
-                <span>✦</span>
-              </div>
-
-              {/* Service Title */}
-              <h3
-                style={{
-                  fontFamily: 'var(--font-serif)',
-                  fontSize: '1rem',
-                  letterSpacing: '0.05em',
-                  color: '#1a1510',
-                  textTransform: 'uppercase',
-                  lineHeight: 1.25,
-                  minHeight: '2.5rem',
-                  marginBottom: '1rem',
-                  fontWeight: 500,
-                }}
-              >
-                {srv.title}
-              </h3>
-
-              {/* Card Image */}
-              <div style={{ width: '100%', height: '140px', overflow: 'hidden', marginBottom: '1.25rem', background: '#f5f2eb' }}>
-                <img
-                  src={getMediaUrl(srv.coverImage || (srv as any).image)}
-                  alt={srv.title}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              </div>
-
-              {/* Card Description */}
-              <p style={{ fontSize: '10px', color: '#6b6052', lineHeight: 1.6, marginBottom: '1.5rem', flex: 1 }}>
-                {srv.description}
-              </p>
-
-              {/* Card CTA Link */}
-              <Link
-                to={`/portfolio/${srv.slug}`}
-                style={{
-                  fontSize: '9px',
-                  letterSpacing: '0.25em',
-                  color: '#C5A059',
-                  textTransform: 'uppercase',
-                  fontWeight: 600,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  marginTop: 'auto',
-                }}
-              >
-                <span>VER SERVICIO</span>
-                <span>→</span>
-              </Link>
-            </div>
-          ))}
-
-          {/* Right Arrow Carousel Button */}
-          <div
-            style={{
-              position: 'absolute',
-              right: '-20px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              border: '1px solid rgba(197, 160, 89, 0.6)',
-              background: '#ffffff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#C5A059',
-              cursor: 'pointer',
-              boxShadow: '0 4px 10px rgba(0,0,0,0.08)',
-              zIndex: 10,
-            }}
-          >
-            <ArrowRight size={16} />
-          </div>
-        </div>
-      </section>
-      {/* END: Services Carousel Section */}
 
       {/* BEGIN: Feature Pillars Footer Section */}
       <section style={{ maxWidth: '1360px', margin: '0 auto', padding: '0 3rem 4rem 3rem' }}>

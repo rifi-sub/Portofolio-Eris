@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Save, X } from 'lucide-react';
+import { Plus, Edit2, Trash2, Save, X, Image as ImageIcon } from 'lucide-react';
 import { portfolioApi } from '../../services/portfolioApi';
-import { adminApi } from '../services/adminApi';
+import { adminApi, getMediaUrl } from '../services/adminApi';
+import { MediaPickerModal } from '../components/MediaPickerModal';
 import type { Service } from '../../types';
 
 export const AdminServices: React.FC = () => {
@@ -9,6 +10,7 @@ export const AdminServices: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [editingService, setEditingService] = useState<Partial<Service> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showMediaPicker, setShowMediaPicker] = useState(false);
 
   const fetchServices = async () => {
     setLoading(true);
@@ -244,6 +246,37 @@ export const AdminServices: React.FC = () => {
                 </div>
               </div>
 
+              {/* Imagen de Portada del Servicio */}
+              <div>
+                <label style={{ display: 'block', color: '#C5A059', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem' }}>IMAGEN DE PORTADA DEL SERVICIO</label>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <input
+                    type="text"
+                    value={editingService.coverImage || ''}
+                    onChange={(e) => setEditingService({ ...editingService, coverImage: e.target.value })}
+                    placeholder="/srv-editorial.png o URL de la biblioteca"
+                    style={{ flex: 1, padding: '0.75rem', backgroundColor: '#090807', border: '1px solid rgba(197,160,89,0.3)', borderRadius: '6px', color: '#fff', outline: 'none', boxSizing: 'border-box' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowMediaPicker(true)}
+                    style={{ padding: '0.75rem 1rem', backgroundColor: 'rgba(197,160,89,0.2)', border: '1px solid #C5A059', color: '#F3D89D', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', whiteSpace: 'nowrap' }}
+                  >
+                    <ImageIcon size={16} /> Elegir Imagen
+                  </button>
+                </div>
+                {editingService.coverImage && (
+                  <div style={{ marginTop: '0.75rem', width: '120px', height: '80px', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(197,160,89,0.3)' }}>
+                    <img
+                      src={getMediaUrl(editingService.coverImage)}
+                      alt="Vista previa"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+                    />
+                  </div>
+                )}
+              </div>
+
               <div>
                 <label style={{ display: 'block', color: '#C5A059', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem' }}>DESCRIPCIÓN COMPLETA</label>
                 <textarea
@@ -273,6 +306,12 @@ export const AdminServices: React.FC = () => {
           </div>
         </div>
       )}
+
+      <MediaPickerModal
+        isOpen={showMediaPicker}
+        onClose={() => setShowMediaPicker(false)}
+        onSelectUrl={(url) => setEditingService(prev => prev ? { ...prev, coverImage: url } : null)}
+      />
     </div>
   );
 };
