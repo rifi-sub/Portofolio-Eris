@@ -14,17 +14,28 @@ export const SobreMi: React.FC = () => {
     }).then(setSectionData);
   }, []);
 
-  const imageList = sectionData.images ? JSON.parse(sectionData.images) : ['/portfolio-hero.png'];
+  const imageList = sectionData.images
+    ? (typeof sectionData.images === 'string' ? JSON.parse(sectionData.images) : sectionData.images)
+    : ['/portfolio-hero.png'];
   const displayImage = imageList[0] || '/portfolio-hero.png';
   const imgUrl = getMediaUrl(displayImage);
 
-  const formacion = [
+  let metaParsed: any = {};
+  if (sectionData.metadata) {
+    try {
+      metaParsed = typeof sectionData.metadata === 'string' ? JSON.parse(sectionData.metadata) : sectionData.metadata;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  const formacion: Array<{ ano: string; titulo: string; centro: string }> = metaParsed.formacion && metaParsed.formacion.length > 0 ? metaParsed.formacion : [
     { ano: '2017', titulo: 'Grado en Bellas Artes', centro: 'Universidad de Sevilla' },
     { ano: '2019', titulo: 'Máster en Ilustración y Concept Art', centro: 'ECV, Valencia' },
     { ano: '2021', titulo: 'Curso de Grabado y Técnicas de Impresión', centro: 'Taller de Arte La Gráfica, Madrid' }
   ];
 
-  const softwares = [
+  const softwares: Array<{ code: string; name: string; category: string }> = metaParsed.softwares && metaParsed.softwares.length > 0 ? metaParsed.softwares : [
     { code: 'Ps', name: 'Adobe Photoshop', category: 'Pintura & Edición' },
     { code: 'Cp', name: 'Clip Studio Paint', category: 'Entintado & Cómic' },
     { code: 'Pr', name: 'Procreate', category: 'Ilustración Digital' },
@@ -32,7 +43,7 @@ export const SobreMi: React.FC = () => {
     { code: 'Id', name: 'Adobe InDesign', category: 'Maquetación Editorial' }
   ];
 
-  const experiencia = [
+  const experiencia: Array<{ periodo: string; puesto: string; descripcion: string }> = metaParsed.experiencia && metaParsed.experiencia.length > 0 ? metaParsed.experiencia : [
     {
       periodo: '2018 — Actualidad',
       puesto: 'Ilustradora Freelance',

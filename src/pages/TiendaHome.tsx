@@ -64,9 +64,21 @@ export const TiendaHome: React.FC = () => {
     });
   };
 
+  const bannerImg = hero.images
+    ? (typeof hero.images === 'string' ? JSON.parse(hero.images)[0] : hero.images[0])
+    : null;
+  const bannerUrl = getMediaUrl(bannerImg);
+
   return (
     <div className="page-container">
       <div className="section-wrapper">
+        {/* Banner de la Tienda (si está configurado en Admin) */}
+        {bannerUrl && (
+          <div style={{ width: '100%', maxHeight: '350px', borderRadius: '12px', overflow: 'hidden', marginBottom: '2.5rem', border: '1px solid rgba(197, 160, 89, 0.35)', boxShadow: '0 8px 30px rgba(0,0,0,0.06)' }}>
+            <img src={bannerUrl} alt={hero.title || 'Banner Tienda'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
+        )}
+
         {/* Header de la Tienda */}
         <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
            <span className="section-subtitle">{hero.subtitle || 'OBRAS DE AUTOR & EDICIONES LIMITADAS'}</span>
