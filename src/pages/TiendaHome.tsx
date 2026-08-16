@@ -192,38 +192,35 @@ export const TiendaHome: React.FC = () => {
                       <span className="badge-gold" style={{ fontSize: '8px' }}>{badgeText}</span>
                     </div>
 
-                    {/* Imagen del Producto - Padded Frame & Contain Fit */}
+                    {/* Imagen del Producto - Cuadrada para uniformidad visual */}
                     <div
                       className="product-image-container"
                       style={{
                         position: 'relative',
                         width: '100%',
-                        height: '280px',
+                        aspectRatio: '1 / 1',
                         overflow: 'hidden',
                         background: '#f5f2eb',
                         marginBottom: '1.25rem',
                         border: '1px solid rgba(197,160,89,0.25)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: '0.5rem',
                       }}
                     >
                       <img
                         src={coverUrl}
                         alt={prod.title}
                         style={{
-                          maxWidth: '100%',
-                          maxHeight: '100%',
-                          objectFit: 'contain',
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          objectPosition: 'center',
                           transition: 'transform 0.35s ease',
                         }}
                       />
 
-                      {/* Botón flotante para ampliar imagen */}
+                      {/* Botón flotante para ampliar imagen en proporciones originales */}
                       <button
                         onClick={(e) => openLightbox(prod, e)}
-                        title="Ampliar fotografía completa"
+                        title="Ver imagen en proporciones originales"
                         aria-label="Ampliar fotografía"
                         style={{
                           position: 'absolute',
