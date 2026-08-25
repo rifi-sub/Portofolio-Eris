@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Mail, MapPin, Send, CheckCircle2, Clock } from 'lucide-react';
 import { portfolioApi, getMediaUrl, type ContentSection } from '../services/portfolioApi';
 
 export const SobreMi: React.FC = () => {
   const [sectionData, setSectionData] = useState<Partial<ContentSection>>({});
+  const [contactoEnviado, setContactoEnviado] = useState(false);
 
   useEffect(() => {
     portfolioApi.getContentSection('sobre_mi_bio', {
@@ -193,7 +195,7 @@ export const SobreMi: React.FC = () => {
         </div>
 
         {/* Colaboraciones / Marcas */}
-        <div style={{ background: '#ffffff', border: '1px solid rgba(197, 160, 89, 0.3)', padding: '3rem 2rem', textAlign: 'center' }}>
+        <div style={{ background: '#ffffff', border: '1px solid rgba(197, 160, 89, 0.3)', padding: '3rem 2rem', textAlign: 'center', marginBottom: '5rem' }}>
           <span className="section-subtitle">CONFIANZA & EDITORIALES</span>
           <h3 className="section-title" style={{ marginBottom: '2.5rem' }}>
             COLABORACIONES <span style={{ color: '#C5A059' }}>✦</span>
@@ -207,6 +209,122 @@ export const SobreMi: React.FC = () => {
                 </span>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Sección de Contacto e Información del Estudio (Sección requerida al final de Sobre Mí) */}
+        <div id="contacto" style={{ scrollMarginTop: '100px' }}>
+          <div style={{ textAlign: 'center', maxWidth: '680px', margin: '0 auto 3rem auto' }}>
+            <span className="section-subtitle">CANAL DIRECTO</span>
+            <h2 className="section-title" style={{ fontSize: '2rem' }}>
+              CONTACTO & ESTUDIO <span style={{ color: '#C5A059' }}>✦</span>
+            </h2>
+            <div className="star-ornament" style={{ justifyContent: 'center', margin: '0.75rem 0' }}>
+              <span className="star-symbol">✦</span>
+            </div>
+            <p style={{ fontSize: '12px', color: '#5c5247', lineHeight: 1.8 }}>
+              ¿Tienes una propuesta editorial, encargo particular o consulta? Estaré encantada de leerte y colaborar contigo.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '3rem', alignItems: 'start' }}>
+            {/* Info Side */}
+            <div style={{ background: '#ffffff', border: '1px solid rgba(197, 160, 89, 0.35)', padding: '2.5rem' }}>
+              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', color: '#1a1510', marginBottom: '1.5rem' }}>
+                Información del Estudio <span style={{ color: '#C5A059' }}>✦</span>
+              </h3>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
+                  <Mail size={20} color="#C5A059" style={{ flexShrink: 0, marginTop: '2px' }} />
+                  <div>
+                    <span style={{ fontSize: '9px', letterSpacing: '0.2em', color: '#8c8073', textTransform: 'uppercase', display: 'block', marginBottom: '0.25rem' }}>EMAIL DIRECTO</span>
+                    <a href="mailto:contacto@ilustrisimamaestra.com" style={{ fontSize: '13px', color: '#1a1510', fontWeight: 600, textDecoration: 'none' }}>
+                      contacto@ilustrisimamaestra.com
+                    </a>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
+                  <Clock size={20} color="#C5A059" style={{ flexShrink: 0, marginTop: '2px' }} />
+                  <div>
+                    <span style={{ fontSize: '9px', letterSpacing: '0.2em', color: '#8c8073', textTransform: 'uppercase', display: 'block', marginBottom: '0.25rem' }}>HORARIO DE ATENCIÓN</span>
+                    <span style={{ fontSize: '12px', color: '#5c5247' }}>Lunes a Viernes: 09:00 - 18:00 (CET)</span>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
+                  <MapPin size={20} color="#C5A059" style={{ flexShrink: 0, marginTop: '2px' }} />
+                  <div>
+                    <span style={{ fontSize: '9px', letterSpacing: '0.2em', color: '#8c8073', textTransform: 'uppercase', display: 'block', marginBottom: '0.25rem' }}>UBICACIÓN DEL ESTUDIO</span>
+                    <span style={{ fontSize: '12px', color: '#5c5247' }}>Madrid / España (Envíos Internacionales)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ marginTop: '2.5rem', borderTop: '1px solid rgba(197, 160, 89, 0.25)', paddingTop: '1.5rem' }}>
+                <span className="badge-gold">
+                  ✦ DISPONIBILIDAD: ABIERTO A ENCARGOS 2026
+                </span>
+              </div>
+            </div>
+
+            {/* Form Side */}
+            {contactoEnviado ? (
+              <div style={{ background: '#ffffff', border: '1px solid rgba(197, 160, 89, 0.5)', padding: '3.5rem', textAlign: 'center' }}>
+                <CheckCircle2 size={36} color="#C5A059" style={{ margin: '0 auto 1rem auto' }} />
+                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', color: '#1a1510', marginBottom: '1rem' }}>
+                  ¡Mensaje Enviado con Éxito! <span style={{ color: '#C5A059' }}>✦</span>
+                </h3>
+                <p style={{ fontSize: '12px', color: '#5c5247', lineHeight: 1.8, marginBottom: '2rem' }}>
+                  Gracias por tu interés. Te responderé en un plazo máximo de 24 a 48 horas laborables.
+                </p>
+                <button onClick={() => setContactoEnviado(false)} className="btn-gold-primary">
+                  ENVIAR OTRO MENSAJE
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={(e) => { e.preventDefault(); setContactoEnviado(true); }} style={{ background: '#ffffff', border: '1px solid rgba(197, 160, 89, 0.35)', padding: '2.5rem' }}>
+                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', color: '#1a1510', marginBottom: '1.5rem' }}>
+                  Formulario de Mensaje Directo <span style={{ color: '#C5A059' }}>✦</span>
+                </h3>
+
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <span style={{ fontSize: '10px', letterSpacing: '0.15em', color: '#5c5247', textTransform: 'uppercase', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>Nombre</span>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Tu nombre completo"
+                    style={{ width: '100%', padding: '0.85rem 1rem', border: '1px solid rgba(197, 160, 89, 0.35)', fontSize: '11px', background: '#faf8f5', outline: 'none', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <span style={{ fontSize: '10px', letterSpacing: '0.15em', color: '#5c5247', textTransform: 'uppercase', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>Email</span>
+                  <input
+                    type="email"
+                    required
+                    placeholder="tuemail@ejemplo.com"
+                    style={{ width: '100%', padding: '0.85rem 1rem', border: '1px solid rgba(197, 160, 89, 0.35)', fontSize: '11px', background: '#faf8f5', outline: 'none', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <span style={{ fontSize: '10px', letterSpacing: '0.15em', color: '#5c5247', textTransform: 'uppercase', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>Mensaje</span>
+                  <textarea
+                    required
+                    rows={4}
+                    placeholder="Escribe aquí tu propuesta o mensaje..."
+                    style={{ width: '100%', padding: '0.85rem 1rem', border: '1px solid rgba(197, 160, 89, 0.35)', fontSize: '11px', background: '#faf8f5', outline: 'none', resize: 'vertical', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                <button type="submit" className="btn-gold-primary" style={{ width: '100%', justifyContent: 'center' }}>
+                  <Send size={15} />
+                  <span>ENVIAR MENSAJE</span>
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </div>

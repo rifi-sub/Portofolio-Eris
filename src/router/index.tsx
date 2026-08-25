@@ -2,7 +2,8 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import { Layout } from '../components/layout/Layout';
 import { Home } from '../pages/Home';
-import { ListadoServicios } from '../pages/ListadoServicios';
+import { Portfolio } from '../pages/Portfolio';
+import { Servicios } from '../pages/Servicios';
 import { DetalleServicio } from '../pages/DetalleServicio';
 import { FichaProyecto } from '../pages/FichaProyecto';
 import { SolicitarPresupuesto } from '../pages/SolicitarPresupuesto';
@@ -60,10 +61,15 @@ export const AppRouter: React.FC = () => {
 
           {/* All public routes share standard Layout */}
           <Route element={<WithLayout />}>
-            <Route path="/portfolio" element={<ListadoServicios />} />
+            {/* Dedicated Portfolio Gallery */}
+            <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/portfolio/:proyectoSlug" element={<FichaProyecto />} />
+
+            {/* Dedicated Hiring Services */}
+            <Route path="/servicios" element={<Servicios />} />
+            <Route path="/servicios/presupuesto" element={<SolicitarPresupuesto />} />
+            <Route path="/servicios/:servicioSlug" element={<DetalleServicio />} />
             <Route path="/portfolio/presupuesto" element={<SolicitarPresupuesto />} />
-            <Route path="/portfolio/:servicioSlug" element={<DetalleServicio />} />
-            <Route path="/portfolio/:servicioSlug/:proyectoSlug" element={<FichaProyecto />} />
 
             <Route path="/proceso-de-trabajo" element={<ProcesoDeTrabajo />} />
             <Route path="/contrato" element={<Contrato />} />

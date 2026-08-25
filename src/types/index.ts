@@ -25,6 +25,7 @@ export interface Project {
   coverImage: string;
   // Optional project fields (conditionally rendered in UI)
   subtitle?: string;
+  category?: string;
   client?: string;
   year?: string | number;
   software?: string[];
@@ -42,6 +43,8 @@ export interface Project {
   };
   featured?: boolean;
   tags?: string[];
+  active?: boolean;
+  order?: number;
 }
 
 export interface Product {

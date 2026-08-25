@@ -13,17 +13,17 @@ export const Header: React.FC = () => {
 
   const isActive = (path: string) => {
     if (path === '/portfolio' && (location.pathname === '/portfolio' || location.pathname.startsWith('/portfolio/'))) return true;
+    if (path === '/servicios' && (location.pathname === '/servicios' || location.pathname.startsWith('/servicios/'))) return true;
     if (path === '/tienda' && (location.pathname === '/tienda' || location.pathname.startsWith('/tienda/'))) return true;
     return location.pathname === path;
   };
 
   const navLinks = [
     { label: 'Portfolio', path: '/portfolio' },
+    { label: 'Servicios', path: '/servicios' },
     { label: 'Tienda', path: '/tienda' },
     { label: 'Sobre Mí', path: '/sobre-mi' },
-    { label: 'Proceso', path: '/proceso-de-trabajo' },
-    { label: 'Contacto', path: '/contacto' },
-    { label: 'FAQ', path: '/faq' },
+    { label: 'Proceso de trabajo', path: '/proceso-de-trabajo' },
   ];
 
   return (
@@ -88,7 +88,7 @@ export const Header: React.FC = () => {
         <span style={{ fontSize: '10px', letterSpacing: '0.2em', color: '#5c5247', textTransform: 'uppercase', cursor: 'pointer' }}>
           ES ▾
         </span>
-        <Link to="/contacto">
+        <Link to="/sobre-mi#contacto" aria-label="Contacto">
           <div
             style={{
               width: '32px',

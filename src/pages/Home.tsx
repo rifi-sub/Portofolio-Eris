@@ -159,12 +159,14 @@ export const Home: React.FC = () => {
             <div style={{ fontSize: '9px', color: '#C5A059', marginTop: '3px' }}>✦</div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem', pointerEvents: 'auto' }}>
-            <ul style={{ display: 'flex', gap: '2.5rem', listStyle: 'none', fontSize: '10px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#ffffff', margin: 0, padding: 0, fontWeight: 600, textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>
+            <ul style={{ display: 'flex', gap: '2rem', listStyle: 'none', fontSize: '10px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#ffffff', margin: 0, padding: 0, fontWeight: 600, textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>
+              <li><Link to="/portfolio">Portfolio</Link></li>
+              <li><Link to="/servicios">Servicios</Link></li>
+              <li><Link to="/tienda">Tienda</Link></li>
               <li><Link to="/sobre-mi">Sobre Mí</Link></li>
               <li><Link to="/proceso-de-trabajo">Proceso</Link></li>
-              <li><Link to="/contacto">Contacto</Link></li>
             </ul>
-            <Link to="/contacto" style={{ width: '30px', height: '30px', borderRadius: '50%', border: '1px solid rgba(197,160,89,0.6)', background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#F3D89D', boxShadow: '0 2px 8px rgba(0,0,0,0.6)' }}>
+            <Link to="/sobre-mi#contacto" title="Contacto" style={{ width: '30px', height: '30px', borderRadius: '50%', border: '1px solid rgba(197,160,89,0.6)', background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#F3D89D', boxShadow: '0 2px 8px rgba(0,0,0,0.6)' }}>
               <User size={15} />
             </Link>
           </div>

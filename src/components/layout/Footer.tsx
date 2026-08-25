@@ -106,30 +106,38 @@ export const Footer: React.FC = () => {
           <div>
             <h4 className="site-footer__title">Portfolio</h4>
             <ul className="site-footer__links">
-              <li><Link to="/portfolio" className="site-footer__link">Áreas de Especialización</Link></li>
-              <li><Link to="/portfolio/presupuesto" className="site-footer__link">Solicitar Presupuesto</Link></li>
+              <li><Link to="/portfolio" className="site-footer__link">Galería de Obras</Link></li>
               <li><Link to="/proceso-de-trabajo" className="site-footer__link">Proceso Creativo</Link></li>
               <li><Link to="/contrato" className="site-footer__link">Condiciones del Encargo</Link></li>
             </ul>
           </div>
 
-          {/* Column 2: Tienda */}
+          {/* Column 2: Servicios */}
+          <div>
+            <h4 className="site-footer__title">Servicios</h4>
+            <ul className="site-footer__links">
+              <li><Link to="/servicios" className="site-footer__link">Contratar Servicios</Link></li>
+              <li><Link to="/servicios/presupuesto" className="site-footer__link">Solicitar Presupuesto</Link></li>
+              <li><Link to="/servicios/ilustracion-editorial" className="site-footer__link">Ilustración Editorial</Link></li>
+            </ul>
+          </div>
+
+          {/* Column 3: Tienda */}
           <div>
             <h4 className="site-footer__title">Tienda & Obra</h4>
             <ul className="site-footer__links">
               <li><Link to="/tienda" className="site-footer__link">Láminas Fine Art</Link></li>
-              <li><Link to="/tienda" className="site-footer__link">Publicaciones Ilustradas</Link></li>
-              <li><Link to="/tienda" className="site-footer__link">Recursos Digitales</Link></li>
+              <li><Link to="/tienda" className="site-footer__link">Artbooks & Publicaciones</Link></li>
               <li><Link to="/faq" className="site-footer__link">Preguntas Frecuentes</Link></li>
             </ul>
           </div>
 
-          {/* Column 3: Estudio */}
+          {/* Column 4: Estudio */}
           <div>
             <h4 className="site-footer__title">Estudio</h4>
             <ul className="site-footer__links">
               <li><Link to="/sobre-mi" className="site-footer__link">Sobre Mí</Link></li>
-              <li><Link to="/contacto" className="site-footer__link">Contacto Directo</Link></li>
+              <li><Link to="/sobre-mi#contacto" className="site-footer__link">Contacto Directo</Link></li>
               <li><Link to="/faq" className="site-footer__link">Envíos & Ayuda</Link></li>
             </ul>
           </div>

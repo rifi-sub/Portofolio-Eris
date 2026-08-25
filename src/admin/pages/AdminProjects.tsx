@@ -33,6 +33,7 @@ export const AdminProjects: React.FC = () => {
     setEditingProject({
       title: '',
       slug: '',
+      category: 'Editorial',
       subtitle: '',
       coverImage: '/portfolio-hero.png',
       client: '',
@@ -42,6 +43,8 @@ export const AdminProjects: React.FC = () => {
       conceptText: '',
       resultSummary: '',
       featured: false,
+      active: true,
+      order: projects.length + 1,
       tags: [],
       gallery: [],
       software: ['Procreate', 'Photoshop']
@@ -148,7 +151,8 @@ export const AdminProjects: React.FC = () => {
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(197,160,89,0.2)', backgroundColor: 'rgba(197,160,89,0.05)', color: '#C5A059' }}>
                 <th style={{ padding: '1rem' }}>Portada</th>
-                <th style={{ padding: '1rem' }}>Título</th>
+                <th style={{ padding: '1rem' }}>Título / URL</th>
+                <th style={{ padding: '1rem' }}>Categoría</th>
                 <th style={{ padding: '1rem' }}>Cliente / Año</th>
                 <th style={{ padding: '1rem' }}>Estado</th>
                 <th style={{ padding: '1rem', textAlign: 'right' }}>Acciones</th>
@@ -171,12 +175,17 @@ export const AdminProjects: React.FC = () => {
                     {p.title}
                     <div style={{ fontSize: '0.75rem', color: '#A3998D', fontWeight: 400 }}>/{p.slug}</div>
                   </td>
+                  <td style={{ padding: '1rem' }}>
+                    <span style={{ fontSize: '0.75rem', color: '#C5A059', backgroundColor: 'rgba(197,160,89,0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px', border: '1px solid rgba(197,160,89,0.3)' }}>
+                      {p.category || 'Editorial'}
+                    </span>
+                  </td>
                   <td style={{ padding: '1rem', color: '#E5D6C5' }}>
                     {p.client || '—'} {p.year ? `(${p.year})` : ''}
                   </td>
                   <td style={{ padding: '1rem' }}>
                     <span style={{ fontSize: '0.75rem', color: p.active !== false ? '#10B981' : '#EF4444', backgroundColor: 'rgba(255,255,255,0.03)', padding: '0.25rem 0.5rem', borderRadius: '4px' }}>
-                      {p.active !== false ? 'Publicado' : 'Oculto / Borrador'}
+                      {p.active !== false ? 'Publicado' : 'Oculto'}
                     </span>
                   </td>
                   <td style={{ padding: '1rem', textAlign: 'right' }}>
@@ -248,6 +257,28 @@ export const AdminProjects: React.FC = () => {
                     value={editingProject.slug || ''}
                     placeholder="la-flor-y-la-niebla"
                     onChange={(e) => setEditingProject({ ...editingProject, slug: e.target.value })}
+                    style={{ width: '100%', padding: '0.75rem', backgroundColor: '#090807', border: '1px solid rgba(197,160,89,0.3)', borderRadius: '6px', color: '#fff', outline: 'none', boxSizing: 'border-box' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', color: '#C5A059', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem' }}>CATEGORÍA DE LA GALERÍA</label>
+                  <input
+                    type="text"
+                    value={editingProject.category || ''}
+                    placeholder="Editorial, Personajes, Entornos, Retratos, Mascotas, Personal..."
+                    onChange={(e) => setEditingProject({ ...editingProject, category: e.target.value })}
+                    style={{ width: '100%', padding: '0.75rem', backgroundColor: '#090807', border: '1px solid rgba(197,160,89,0.3)', borderRadius: '6px', color: '#fff', outline: 'none', boxSizing: 'border-box' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', color: '#C5A059', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem' }}>ORDEN EN PORTFOLIO</label>
+                  <input
+                    type="number"
+                    value={editingProject.order || 1}
+                    onChange={(e) => setEditingProject({ ...editingProject, order: parseInt(e.target.value, 10) || 1 })}
                     style={{ width: '100%', padding: '0.75rem', backgroundColor: '#090807', border: '1px solid rgba(197,160,89,0.3)', borderRadius: '6px', color: '#fff', outline: 'none', boxSizing: 'border-box' }}
                   />
                 </div>
