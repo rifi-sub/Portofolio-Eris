@@ -13,6 +13,7 @@ import { TiendaHome } from '../pages/TiendaHome';
 import { FichaProducto } from '../pages/FichaProducto';
 import { SobreMi } from '../pages/SobreMi';
 import { Contacto } from '../pages/Contacto';
+import { ClientPortalEncargo } from '../pages/ClientPortalEncargo';
 import { FAQ } from '../pages/FAQ';
 import { Resenas } from '../pages/Resenas';
 import { Cesta } from '../pages/Cesta';
@@ -70,6 +71,9 @@ export const AppRouter: React.FC = () => {
             <Route path="/servicios/presupuesto" element={<SolicitarPresupuesto />} />
             <Route path="/servicios/:servicioSlug" element={<DetalleServicio />} />
             <Route path="/portfolio/presupuesto" element={<SolicitarPresupuesto />} />
+
+            {/* Area Privada de Encargo del Cliente (Sin registro, mediante enlace mágico) */}
+            <Route path="/cliente/encargo" element={<ClientPortalEncargo />} />
 
             <Route path="/proceso-de-trabajo" element={<ProcesoDeTrabajo />} />
             <Route path="/contrato" element={<Contrato />} />

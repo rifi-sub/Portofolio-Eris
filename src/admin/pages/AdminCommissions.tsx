@@ -144,16 +144,24 @@ export const AdminCommissions: React.FC = () => {
                   </div>
 
                   {/* Acciones */}
-                  <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                  <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                    <a
+                      href={`/cliente/encargo?token=${comm.token || 'demo-token-123'}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ backgroundColor: 'rgba(197,160,89,0.1)', color: '#C5A059', border: '1px solid rgba(197,160,89,0.3)', padding: '0.45rem 0.65rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
+                    >
+                      <ExternalLink size={12} /> Ver Portal Cliente
+                    </a>
                     <button
                       onClick={() => handleOpenEdit(comm)}
-                      style={{ backgroundColor: 'rgba(197,160,89,0.15)', color: '#F3D89D', border: '1px solid rgba(197,160,89,0.3)', padding: '0.5rem 0.75rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.8rem' }}
+                      style={{ backgroundColor: '#C5A059', color: '#090807', border: 'none', padding: '0.45rem 0.75rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700 }}
                     >
-                      Estado
+                      Gestionar
                     </button>
                     <button
                       onClick={() => handleDelete(comm.id)}
-                      style={{ backgroundColor: 'transparent', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)', padding: '0.5rem 0.65rem', borderRadius: '6px', cursor: 'pointer' }}
+                      style={{ backgroundColor: 'transparent', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)', padding: '0.45rem 0.6rem', borderRadius: '6px', cursor: 'pointer' }}
                     >
                       <Trash2 size={14} />
                     </button>
@@ -165,49 +173,86 @@ export const AdminCommissions: React.FC = () => {
         </div>
       )}
 
-      {/* Modal Cambiar Estado */}
+      {/* Modal Gestionar Encargo & Presupuesto */}
       {editingCommission && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
-          <div style={{ backgroundColor: '#121620', border: '1px solid rgba(197,160,89,0.3)', borderRadius: '12px', width: '100%', maxWidth: '480px', padding: '2rem' }}>
+          <div style={{ backgroundColor: '#121620', border: '1px solid rgba(197,160,89,0.3)', borderRadius: '12px', width: '100%', maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto', padding: '2rem', boxSizing: 'border-box' }}>
             <h2 style={{ color: '#F3D89D', fontFamily: 'var(--font-serif, serif)', marginTop: 0, marginBottom: '0.5rem' }}>
-              Actualizar Estado del Encargo
+              Gestión Integral del Encargo
             </h2>
             <p style={{ color: '#8E9BAE', fontSize: '0.8rem', marginBottom: '1.5rem' }}>
               Proyecto: <strong style={{ color: '#E2E8F0' }}>{editingCommission.projectName}</strong> ({editingCommission.clientName})
             </p>
 
             <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              <div>
-                <label style={{ display: 'block', color: '#8E9BAE', fontSize: '0.8rem', marginBottom: '0.35rem' }}>Seleccionar Estado del Flujo *</label>
-                <select
-                  value={newStatus}
-                  onChange={(e) => setNewStatus(e.target.value)}
-                  style={{ width: '100%', padding: '0.65rem', backgroundColor: '#0A0D14', border: '1px solid rgba(197,160,89,0.3)', color: '#E2E8F0', borderRadius: '6px' }}
-                >
-                  <option value="PENDING">🟡 Pendiente (Revisión Inicial)</option>
-                  <option value="AWAITING_REFS">🔵 Esperando Referencias del Cliente</option>
-                  <option value="SKETCH">✏️ Bocetos Iniciales</option>
-                  <option value="COLOR">🎨 Propuesta de Color</option>
-                  <option value="REVISION">🔍 Segunda Revisión</option>
-                  <option value="COMPLETED">✅ Finalizado & Entregado</option>
-                  <option value="ARCHIVED">📁 Archivado</option>
-                </select>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', color: '#8E9BAE', fontSize: '0.8rem', marginBottom: '0.35rem' }}>Fase Actual del Proyecto *</label>
+                  <select
+                    value={newStatus}
+                    onChange={(e) => setNewStatus(e.target.value)}
+                    style={{ width: '100%', padding: '0.65rem', backgroundColor: '#0A0D14', border: '1px solid rgba(197,160,89,0.3)', color: '#E2E8F0', borderRadius: '6px' }}
+                  >
+                    <option value="PENDING">🟡 Pendiente (Revisión Inicial)</option>
+                    <option value="AWAITING_REFS">🔵 Esperando Referencias</option>
+                    <option value="PRESUPUESTO">💼 Presupuesto Enviado</option>
+                    <option value="CONTRATO">📜 Contrato Habilitado</option>
+                    <option value="RESERVA">💳 Esperando Reserva 50%</option>
+                    <option value="SKETCH">✏️ Fase 1: Boceto</option>
+                    <option value="COLOR">🎨 Fase 2: Color</option>
+                    <option value="PAGO_FINAL">💳 Esperando 50% Restante</option>
+                    <option value="COMPLETED">✅ Finalizado & Entregado</option>
+                    <option value="CANCELADO">🚫 Marcar como Cancelado</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', color: '#8E9BAE', fontSize: '0.8rem', marginBottom: '0.35rem' }}>Modelo de Contrato Asociado</label>
+                  <select
+                    defaultValue="editorial"
+                    style={{ width: '100%', padding: '0.65rem', backgroundColor: '#0A0D14', border: '1px solid rgba(197,160,89,0.3)', color: '#E2E8F0', borderRadius: '6px' }}
+                  >
+                    <option value="particular">Encargo Particular / Privado</option>
+                    <option value="editorial">Licencia Editorial & Portadas</option>
+                    <option value="empresa">Comercial / Empresa</option>
+                    <option value="marca">Branding & Mascota de Marca</option>
+                  </select>
+                </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', color: '#8E9BAE', fontSize: '0.8rem', marginBottom: '0.35rem' }}>Notas Internas / Seguimiento</label>
+                <label style={{ display: 'block', color: '#C5A059', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.35rem' }}>Notas Internas (Solo para la Autora)</label>
                 <textarea
-                  rows={4}
+                  rows={3}
                   value={newNotes}
                   onChange={(e) => setNewNotes(e.target.value)}
-                  placeholder="Escribe detalles del estado del boceto, acuerdos de plazo, feedback recibido..."
-                  style={{ width: '100%', padding: '0.65rem', backgroundColor: '#0A0D14', border: '1px solid rgba(197,160,89,0.3)', color: '#E2E8F0', borderRadius: '6px' }}
+                  placeholder="Apuntes privados: 'El cliente prefiere la 2ª composición', 'Esperando referencias extra'..."
+                  style={{ width: '100%', padding: '0.65rem', backgroundColor: '#0A0D14', border: '1px solid rgba(197,160,89,0.3)', color: '#E2E8F0', borderRadius: '6px', resize: 'vertical' }}
                 />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', color: '#8E9BAE', fontSize: '0.8rem', marginBottom: '0.35rem' }}>Precio Total del Presupuesto (€)</label>
+                  <input
+                    type="number"
+                    defaultValue={900}
+                    style={{ width: '100%', padding: '0.65rem', backgroundColor: '#0A0D14', border: '1px solid rgba(197,160,89,0.3)', color: '#E2E8F0', borderRadius: '6px' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', color: '#8E9BAE', fontSize: '0.8rem', marginBottom: '0.35rem' }}>% Suplemento 3ª Revisión</label>
+                  <input
+                    type="number"
+                    defaultValue={15}
+                    style={{ width: '100%', padding: '0.65rem', backgroundColor: '#0A0D14', border: '1px solid rgba(197,160,89,0.3)', color: '#E2E8F0', borderRadius: '6px' }}
+                  />
+                </div>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
                 <button type="button" onClick={() => setEditingCommission(null)} style={{ backgroundColor: 'transparent', color: '#8E9BAE', border: 'none', padding: '0.65rem 1.25rem', cursor: 'pointer' }}>Cancelar</button>
-                <button type="submit" style={{ backgroundColor: '#C5A059', color: '#0A0D14', border: 'none', padding: '0.65rem 1.25rem', borderRadius: '6px', fontWeight: 600, cursor: 'pointer' }}>Actualizar Estado</button>
+                <button type="submit" style={{ backgroundColor: '#C5A059', color: '#0A0D14', border: 'none', padding: '0.65rem 1.25rem', borderRadius: '6px', fontWeight: 700, cursor: 'pointer' }}>Guardar Cambios</button>
               </div>
             </form>
           </div>

@@ -173,6 +173,114 @@ export const SobreMi: React.FC = () => {
           </div>
         </div>
 
+        {/* Sección: EVOLUCIÓN ARTÍSTICA (Punto 5 del briefing) */}
+        <div style={{ marginBottom: '5rem', background: '#ffffff', border: '1px solid rgba(197, 160, 89, 0.3)', padding: '3.5rem 2.5rem', borderRadius: '6px' }}>
+          <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto 3.5rem auto' }}>
+            <span className="section-subtitle">TRAYECTORIA & HISTORIA</span>
+            <h2 className="section-title" style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>
+              EVOLUCIÓN ARTÍSTICA <span style={{ color: '#C5A059' }}>✦</span>
+            </h2>
+            <div className="star-ornament" style={{ justifyContent: 'center', margin: '0.5rem 0 1rem 0' }}>
+              <span className="star-symbol">✦</span>
+            </div>
+            <p style={{ fontSize: '12px', color: '#5c5247', lineHeight: 1.8 }}>
+              Un recorrido cronológico desde las primeras inquietudes e ilustraciones infantiles hasta la consolidación técnica y artística del estudio actual.
+            </p>
+          </div>
+
+          {/* Timeline Vertical con Hitos */}
+          <div style={{ position: 'relative', maxWidth: '900px', margin: '0 auto', paddingLeft: '1.5rem', borderLeft: '2px solid rgba(197, 160, 89, 0.3)' }}>
+            {[
+              {
+                fase: '01 · INFANCIA & PRIMEROS DIBUJOS',
+                periodo: 'Etapa Inicial',
+                titulo: 'Los Primeros Cuadernos',
+                desc: 'Garabatos, cuentos ilustrados en los márgenes de los libros escolares y la fascinación por dar forma a criaturas fantásticas y personajes imaginarios desde edad temprana.',
+                img: '/srv-props.png'
+              },
+              {
+                fase: '02 · APRENDIZAJE & BELLAS ARTES',
+                periodo: '2013 — 2017',
+                titulo: 'Formación Académica & Técnica Tradicional',
+                desc: 'Estudio intensivo del natural, claroscuro, carboncillo, óleo sobre lienzo y anatomía humana en la Universidad de Sevilla. La disciplina tradicional como cimiento formal.',
+                img: '/srv-concept.png'
+              },
+              {
+                fase: '03 · EVOLUCIÓN TÉCNICA & ARTE DIGITAL',
+                periodo: '2018 — 2020',
+                titulo: 'Transición Digital & Identidad Visual',
+                desc: 'Adopción de herramientas digitales (Photoshop, Procreate, Clip Studio) manteniendo el espíritu artesanal, texturas pictóricas y la calidez del pigmento tradicional.',
+                img: '/srv-character.png'
+              },
+              {
+                fase: '04 · PRIMEROS CLIENTES & ENCARGOS',
+                periodo: '2020 — 2022',
+                titulo: 'Primeras Portadas & Retratos de Autor',
+                desc: 'Primeras comisiones privadas, encargos para autores independientes y desarrollo de arte conceptual para pequeños estudios y publicaciones digitales.',
+                img: '/srv-environment.png'
+              },
+              {
+                fase: '05 · TRABAJOS PROFESIONALES',
+                periodo: '2022 — 2024',
+                titulo: 'Consolidación Editorial & Proyectos de Envergadura',
+                desc: 'Colaboraciones con grandes grupos editoriales (Planeta, Hidra, Culturama), portadas de libros de alta tirada y campañas visuales de autor.',
+                img: '/srv-editorial.png'
+              },
+              {
+                fase: '06 · ACTUALIDAD',
+                periodo: 'Presente',
+                titulo: 'Ilustrísima Maestra & Madurez Creativa',
+                desc: 'Consolidación del sello personal Ilustrísima Maestra: obra original de autor, láminas Fine Art de edición limitada y dirección de arte narrativa integral.',
+                img: '/portfolio-hero.png'
+              }
+            ].map((step, idx) => (
+              <div key={idx} style={{ position: 'relative', marginBottom: idx < 5 ? '3rem' : 0, paddingLeft: '1.75rem' }}>
+                {/* Timeline Dot Indicator */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '-2.15rem',
+                    top: '0.2rem',
+                    width: '18px',
+                    height: '18px',
+                    borderRadius: '50%',
+                    backgroundColor: '#faf8f5',
+                    border: '2px solid #C5A059',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '8px',
+                    color: '#C5A059'
+                  }}
+                >
+                  ✦
+                </div>
+
+                <div style={{ background: '#faf8f5', border: '1px solid rgba(197, 160, 89, 0.25)', padding: '1.5rem', borderRadius: '4px', display: 'grid', gridTemplateColumns: '1fr 140px', gap: '1.5rem', alignItems: 'center' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.35rem' }}>
+                      <span style={{ fontSize: '9px', letterSpacing: '0.2em', color: '#C5A059', fontWeight: 700, textTransform: 'uppercase' }}>
+                        {step.fase}
+                      </span>
+                      <span style={{ fontSize: '10px', color: '#8c8073' }}>• {step.periodo}</span>
+                    </div>
+                    <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', color: '#1a1510', margin: '0 0 0.5rem 0', fontWeight: 500 }}>
+                      {step.titulo}
+                    </h3>
+                    <p style={{ fontSize: '11px', color: '#5c5247', lineHeight: 1.7, margin: 0 }}>
+                      {step.desc}
+                    </p>
+                  </div>
+
+                  <div style={{ height: '100px', borderRadius: '4px', overflow: 'hidden', border: '1px solid rgba(197, 160, 89, 0.25)', background: '#f5f2eb' }}>
+                    <img src={getMediaUrl(step.img)} alt={step.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Obras Destacadas Strip */}
         <div style={{ marginBottom: '5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem' }}>
