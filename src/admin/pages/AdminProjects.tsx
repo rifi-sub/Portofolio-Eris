@@ -12,6 +12,9 @@ export const AdminProjects: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showMediaPicker, setShowMediaPicker] = useState(false);
   const [mediaTargetField, setMediaTargetField] = useState<'cover' | 'gallery'>('cover');
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+  const presetCategories = ['Editorial', 'Personajes', 'Entornos', 'Retratos', 'Mascotas', 'Personal'];
 
   const fetchProjects = async () => {
     setLoading(true);
@@ -150,6 +153,7 @@ export const AdminProjects: React.FC = () => {
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(197,160,89,0.2)', backgroundColor: 'rgba(197,160,89,0.05)', color: '#C5A059' }}>
+                <th style={{ padding: '1rem', width: '30px' }}></th>
                 <th style={{ padding: '1rem' }}>Portada</th>
                 <th style={{ padding: '1rem' }}>Título / URL</th>
                 <th style={{ padding: '1rem' }}>Categoría</th>
@@ -159,8 +163,26 @@ export const AdminProjects: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {projects.map((p: any) => (
-                <tr key={p.id} style={{ borderBottom: '1px solid rgba(197,160,89,0.1)' }}>
+              {projects.map((p: any, index: number) => (
+                <tr
+                  key={p.id}
+                  draggable
+                  onDragStart={() => setDraggedIndex(index)}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={async () => {
+                    if (draggedIndex === null || draggedIndex === index) return;
+                    const next = [...projects];
+                    const [item] = next.splice(draggedIndex, 1);
+                    next.splice(index, 0, item);
+                    setProjects(next);
+                    setDraggedIndex(null);
+                    await adminApi.reorderProjects(next.map((project, order) => ({ id: project.id, order: order + 1 })));
+                  }}
+                  style={{ borderBottom: '1px solid rgba(197,160,89,0.1)', cursor: 'grab' }}
+                >
+                  <td style={{ padding: '0.75rem 0.5rem', textAlign: 'center', color: '#C5A059' }}>
+                    <span title="Arrastrar para reordenar" style={{ cursor: 'grab', fontSize: '1.1rem' }}>☷</span>
+                  </td>
                   <td style={{ padding: '0.75rem 1rem' }}>
                     <div style={{ width: '50px', height: '50px', borderRadius: '4px', overflow: 'hidden', backgroundColor: '#000' }}>
                       <img
@@ -265,13 +287,18 @@ export const AdminProjects: React.FC = () => {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', color: '#C5A059', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem' }}>CATEGORÍA DE LA GALERÍA</label>
-                  <input
-                    type="text"
-                    value={editingProject.category || ''}
-                    placeholder="Editorial, Personajes, Entornos, Retratos, Mascotas, Personal..."
+                  <select
+                    value={editingProject.category || 'Editorial'}
                     onChange={(e) => setEditingProject({ ...editingProject, category: e.target.value })}
                     style={{ width: '100%', padding: '0.75rem', backgroundColor: '#090807', border: '1px solid rgba(197,160,89,0.3)', borderRadius: '6px', color: '#fff', outline: 'none', boxSizing: 'border-box' }}
-                  />
+                  >
+                    {presetCategories.map((cat) => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                    {editingProject.category && !presetCategories.includes(editingProject.category) && (
+                      <option value={editingProject.category}>{editingProject.category}</option>
+                    )}
+                  </select>
                 </div>
                 <div>
                   <label style={{ display: 'block', color: '#C5A059', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem' }}>ORDEN EN PORTFOLIO</label>

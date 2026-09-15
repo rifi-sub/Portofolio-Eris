@@ -388,6 +388,12 @@ export const adminApi = {
     return res.json();
   },
 
+  reorderProjects: async (items: any[]) => {
+    const res = await fetch(`${API_BASE}/admin/projects/reorder`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify({ items }) });
+    if (!res.ok) throw new Error('Error al reordenar obras');
+    return res.json();
+  },
+
   uploadProductMedia: async (productId: string, files: FileList | File[]) => {
     const token = localStorage.getItem('admin_token');
     const formData = new FormData();
