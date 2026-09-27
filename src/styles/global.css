@@ -259,16 +259,13 @@ a {
   display: inline-block;
 }
 
-/* Full Width High-Res Background for Home Page */
+/* Full Width Neutral Base for Home Page */
 .home-bg-full {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/bg-hero2.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-color: #0a0908;
   z-index: 1;
 }
 

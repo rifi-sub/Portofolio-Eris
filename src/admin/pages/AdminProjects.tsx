@@ -74,11 +74,20 @@ export const AdminProjects: React.FC = () => {
     e.preventDefault();
     if (!editingProject?.title) return alert('El título es obligatorio');
 
-    // Auto-generar slug si no existe
-    const slug = editingProject.slug || editingProject.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    // Auto-generar slug limpio sin tildes ni caracteres raros
+    const cleanSlug = (editingProject.slug || editingProject.title)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+
+    const order = typeof editingProject.order === 'number'
+      ? editingProject.order
+      : parseInt(String(editingProject.order || '1'), 10) || 1;
 
     try {
-      const payload = { ...editingProject, slug };
+      const payload = { ...editingProject, slug: cleanSlug, order };
       if (editingProject.id) {
         await adminApi.updateProject(editingProject.id, payload);
       } else {
