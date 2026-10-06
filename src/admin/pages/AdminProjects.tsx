@@ -16,20 +16,50 @@ export const AdminProjects: React.FC = () => {
   const [isCustomCategory, setIsCustomCategory] = useState(false);
   const [customCategoryInput, setCustomCategoryInput] = useState('');
 
+  // Gestión de categorías eliminadas (persistente en backend y localStorage)
+  const [deletedCategories, setDeletedCategories] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('portfolio_deleted_categories');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Modal de confirmación para eliminar categoría
+  const [deleteCategoryModal, setDeleteCategoryModal] = useState<{
+    isOpen: boolean;
+    category: string;
+    affectedCount: number;
+    reassignTo: string;
+    isDeleting: boolean;
+  }>({
+    isOpen: false,
+    category: '',
+    affectedCount: 0,
+    reassignTo: '',
+    isDeleting: false
+  });
+
   const presetCategories = ['Editorial', 'Personajes', 'Entornos', 'Retratos', 'Mascotas', 'Personal'];
 
   const allCategories = useMemo(() => {
-    const set = new Set<string>(presetCategories);
+    const set = new Set<string>();
+    presetCategories.forEach((cat) => {
+      if (!deletedCategories.includes(cat)) {
+        set.add(cat);
+      }
+    });
     projects.forEach((p) => {
-      if (p.category && p.category.trim()) {
+      if (p.category && p.category.trim() && !deletedCategories.includes(p.category.trim())) {
         set.add(p.category.trim());
       }
     });
-    if (editingProject?.category && editingProject.category.trim() && !isCustomCategory) {
+    if (editingProject?.category && editingProject.category.trim() && !isCustomCategory && !deletedCategories.includes(editingProject.category.trim())) {
       set.add(editingProject.category.trim());
     }
     return Array.from(set);
-  }, [projects, editingProject?.category, isCustomCategory]);
+  }, [projects, editingProject?.category, isCustomCategory, deletedCategories]);
 
   const fetchProjects = async () => {
     setLoading(true);
@@ -45,6 +75,19 @@ export const AdminProjects: React.FC = () => {
 
   useEffect(() => {
     fetchProjects();
+    adminApi.getContentSection('portfolio_gallery_categories').then((data) => {
+      if (data && data.metadata) {
+        try {
+          const meta = typeof data.metadata === 'string' ? JSON.parse(data.metadata) : data.metadata;
+          if (Array.isArray(meta.deletedCategories)) {
+            setDeletedCategories(meta.deletedCategories);
+            localStorage.setItem('portfolio_deleted_categories', JSON.stringify(meta.deletedCategories));
+          }
+        } catch (e) {
+          // ignore parsing error
+        }
+      }
+    });
   }, []);
 
   const handleOpenNew = () => {
@@ -107,6 +150,16 @@ export const AdminProjects: React.FC = () => {
 
     const category = (editingProject.category || 'Editorial').trim();
 
+    // Si la categoría estaba en la lista de eliminadas, restaurarla
+    if (deletedCategories.includes(category)) {
+      const updated = deletedCategories.filter((c) => c !== category);
+      setDeletedCategories(updated);
+      localStorage.setItem('portfolio_deleted_categories', JSON.stringify(updated));
+      adminApi.saveContentSection('portfolio_gallery_categories', {
+        metadata: { deletedCategories: updated }
+      }).catch(() => {});
+    }
+
     try {
       const payload = { ...editingProject, slug: cleanSlug, order, category };
       if (editingProject.id) {
@@ -137,6 +190,82 @@ export const AdminProjects: React.FC = () => {
       fetchProjects();
     } catch (e) {
       alert('Error al cambiar visibilidad');
+    }
+  };
+
+  const handlePromptDeleteCategory = (categoryToDelete: string) => {
+    if (!categoryToDelete) return;
+    const affected = projects.filter(
+      (p) => (p.category || 'Editorial').trim().toLowerCase() === categoryToDelete.trim().toLowerCase()
+    );
+    const otherCategories = allCategories.filter(
+      (c) => c.toLowerCase() !== categoryToDelete.toLowerCase()
+    );
+    const fallbackTarget = otherCategories[0] || 'Editorial';
+
+    setDeleteCategoryModal({
+      isOpen: true,
+      category: categoryToDelete,
+      affectedCount: affected.length,
+      reassignTo: fallbackTarget,
+      isDeleting: false
+    });
+  };
+
+  const handleConfirmDeleteCategory = async () => {
+    const { category, affectedCount, reassignTo } = deleteCategoryModal;
+    if (!category) return;
+
+    setDeleteCategoryModal((prev) => ({ ...prev, isDeleting: true }));
+
+    try {
+      // 1. Si hay obras usando esta categoría, reasignarlas
+      if (affectedCount > 0) {
+        const affected = projects.filter(
+          (p) => (p.category || 'Editorial').trim().toLowerCase() === category.trim().toLowerCase()
+        );
+        for (const proj of affected) {
+          await adminApi.updateProject(proj.id, {
+            ...proj,
+            category: reassignTo
+          });
+        }
+      }
+
+      // 2. Registrar en la lista de categorías eliminadas
+      const updatedDeleted = Array.from(new Set([...deletedCategories, category]));
+      setDeletedCategories(updatedDeleted);
+      localStorage.setItem('portfolio_deleted_categories', JSON.stringify(updatedDeleted));
+
+      try {
+        await adminApi.saveContentSection('portfolio_gallery_categories', {
+          metadata: { deletedCategories: updatedDeleted }
+        });
+      } catch (e) {
+        // ignore offline / sync warning
+      }
+
+      // 3. Si la obra actual en edición tenía esta categoría, actualizarla
+      if (editingProject?.category?.toLowerCase() === category.toLowerCase()) {
+        setEditingProject({
+          ...editingProject,
+          category: reassignTo
+        });
+      }
+
+      // 4. Recargar obras para reflejar cambios
+      await fetchProjects();
+
+      setDeleteCategoryModal({
+        isOpen: false,
+        category: '',
+        affectedCount: 0,
+        reassignTo: '',
+        isDeleting: false
+      });
+    } catch (err: any) {
+      alert('Error al eliminar categoría: ' + (err.message || 'Error desconocido'));
+      setDeleteCategoryModal((prev) => ({ ...prev, isDeleting: false }));
     }
   };
 
@@ -359,25 +488,57 @@ export const AdminProjects: React.FC = () => {
                       style={{ width: '100%', padding: '0.75rem', backgroundColor: '#090807', border: '1px solid rgba(197,160,89,0.5)', borderRadius: '6px', color: '#fff', outline: 'none', boxSizing: 'border-box' }}
                     />
                   ) : (
-                    <select
-                      value={editingProject.category || 'Editorial'}
-                      onChange={(e) => {
-                        if (e.target.value === '__NEW__') {
-                          setIsCustomCategory(true);
-                          setCustomCategoryInput('');
-                        } else {
-                          setEditingProject({ ...editingProject, category: e.target.value });
-                        }
-                      }}
-                      style={{ width: '100%', padding: '0.75rem', backgroundColor: '#090807', border: '1px solid rgba(197,160,89,0.3)', borderRadius: '6px', color: '#fff', outline: 'none', boxSizing: 'border-box' }}
-                    >
-                      {allCategories.map((cat) => (
-                        <option key={cat} value={cat}>{cat}</option>
-                      ))}
-                      <option value="__NEW__" style={{ color: '#D4AF65', fontWeight: 600 }}>
-                        + Añadir nueva categoría...
-                      </option>
-                    </select>
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                      <select
+                        value={editingProject.category || allCategories[0] || 'Editorial'}
+                        onChange={(e) => {
+                          if (e.target.value === '__NEW__') {
+                            setIsCustomCategory(true);
+                            setCustomCategoryInput('');
+                          } else {
+                            setEditingProject({ ...editingProject, category: e.target.value });
+                          }
+                        }}
+                        style={{ flex: 1, padding: '0.75rem', backgroundColor: '#090807', border: '1px solid rgba(197,160,89,0.3)', borderRadius: '6px', color: '#fff', outline: 'none', boxSizing: 'border-box' }}
+                      >
+                        {allCategories.map((cat) => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                        <option value="__NEW__" style={{ color: '#D4AF65', fontWeight: 600 }}>
+                          + Añadir nueva categoría...
+                        </option>
+                      </select>
+                      {editingProject.category && (
+                        <button
+                          type="button"
+                          onClick={() => handlePromptDeleteCategory(editingProject.category || allCategories[0])}
+                          title={`Eliminar categoría "${editingProject.category || allCategories[0]}"`}
+                          style={{
+                            padding: '0.75rem',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            border: '1px solid rgba(239, 68, 68, 0.35)',
+                            borderRadius: '6px',
+                            color: '#ef4444',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s ease',
+                            flexShrink: 0
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.22)';
+                            e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.7)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                            e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.35)';
+                          }}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </div>
                   )}
                 </div>
                 <div>
@@ -502,6 +663,171 @@ export const AdminProjects: React.FC = () => {
           }
         }}
       />
+
+      {/* Modal de Confirmación para Eliminar Categoría */}
+      {deleteCategoryModal.isOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0,0,0,0.85)',
+            backdropFilter: 'blur(8px)',
+            zIndex: 10000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1.5rem'
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: '#141210',
+              border: '1px solid rgba(239, 68, 68, 0.45)',
+              boxShadow: '0 12px 36px rgba(0,0,0,0.85)',
+              borderRadius: '12px',
+              width: '100%',
+              maxWidth: '480px',
+              padding: '2rem',
+              boxSizing: 'border-box'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
+              <div
+                style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '50%',
+                  backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#ef4444',
+                  flexShrink: 0
+                }}
+              >
+                <Trash2 size={22} />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, color: '#F3D89D', fontFamily: 'var(--font-serif, serif)', fontSize: '1.3rem' }}>
+                  Eliminar Categoría
+                </h3>
+                <p style={{ margin: '0.2rem 0 0 0', color: '#A3998D', fontSize: '0.85rem' }}>
+                  Galería del Portfolio
+                </p>
+              </div>
+            </div>
+
+            <p style={{ color: '#E5D6C5', fontSize: '0.95rem', lineHeight: 1.5, margin: '0 0 1.25rem 0' }}>
+              ¿Estás seguro de que deseas eliminar la categoría{' '}
+              <strong style={{ color: '#F3D89D', backgroundColor: 'rgba(197,160,89,0.15)', padding: '0.15rem 0.4rem', borderRadius: '4px' }}>
+                «{deleteCategoryModal.category}»
+              </strong>
+              ? Ya no aparecerá en el desplegable de opciones.
+            </p>
+
+            {deleteCategoryModal.affectedCount > 0 ? (
+              <div
+                style={{
+                  backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  marginBottom: '1.5rem'
+                }}
+              >
+                <p style={{ margin: '0 0 0.75rem 0', color: '#FBBF24', fontSize: '0.85rem', fontWeight: 600 }}>
+                  ⚠️ Hay {deleteCategoryModal.affectedCount} obra{deleteCategoryModal.affectedCount > 1 ? 's' : ''} asignada{deleteCategoryModal.affectedCount > 1 ? 's' : ''} a esta categoría:
+                </p>
+                <label style={{ display: 'block', color: '#C5A059', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem' }}>
+                  Reasignar estas obras a:
+                </label>
+                <select
+                  value={deleteCategoryModal.reassignTo}
+                  onChange={(e) => setDeleteCategoryModal((prev) => ({ ...prev, reassignTo: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '0.65rem',
+                    backgroundColor: '#090807',
+                    border: '1px solid rgba(197,160,89,0.4)',
+                    borderRadius: '6px',
+                    color: '#fff',
+                    outline: 'none',
+                    boxSizing: 'border-box'
+                  }}
+                >
+                  {allCategories
+                    .filter((c) => c.toLowerCase() !== deleteCategoryModal.category.toLowerCase())
+                    .map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                </select>
+              </div>
+            ) : (
+              <div
+                style={{
+                  backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                  border: '1px solid rgba(16, 185, 129, 0.25)',
+                  borderRadius: '8px',
+                  padding: '0.75rem 1rem',
+                  marginBottom: '1.5rem',
+                  color: '#34D399',
+                  fontSize: '0.85rem'
+                }}
+              >
+                ✓ Ninguna obra está usando esta categoría actualmente.
+              </div>
+            )}
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+              <button
+                type="button"
+                disabled={deleteCategoryModal.isDeleting}
+                onClick={() => setDeleteCategoryModal((prev) => ({ ...prev, isOpen: false }))}
+                style={{
+                  padding: '0.65rem 1.25rem',
+                  backgroundColor: '#1E1B18',
+                  border: '1px solid rgba(163,153,141,0.3)',
+                  borderRadius: '6px',
+                  color: '#A3998D',
+                  fontSize: '0.9rem',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                disabled={deleteCategoryModal.isDeleting}
+                onClick={handleConfirmDeleteCategory}
+                style={{
+                  padding: '0.65rem 1.25rem',
+                  backgroundColor: '#DC2626',
+                  border: 'none',
+                  borderRadius: '6px',
+                  color: '#fff',
+                  fontWeight: 600,
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  opacity: deleteCategoryModal.isDeleting ? 0.7 : 1
+                }}
+              >
+                {deleteCategoryModal.isDeleting ? (
+                  <span>Eliminando...</span>
+                ) : (
+                  <>
+                    <Trash2 size={16} />
+                    <span>Eliminar Categoría</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
