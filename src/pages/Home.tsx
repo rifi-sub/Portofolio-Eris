@@ -243,7 +243,7 @@ export const Home: React.FC = () => {
               overflow: 'hidden'
             }}
           >
-            {/* Background Layer: Custom cover if uploaded or Editorial Gallery Neutral */}
+            {/* Background Layer: Real colors of the artwork with elegant dark overlay */}
             {portfolioCover ? (
               <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 1 }}>
                 <img
@@ -255,14 +255,24 @@ export const Home: React.FC = () => {
                     objectFit: 'cover',
                     transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease',
                     transform: hoveredSide === 'portfolio' ? 'scale(1.03)' : 'scale(1)',
-                    filter: hoveredSide === 'store' ? 'brightness(0.7) contrast(0.95)' : 'brightness(1)'
+                    filter: hoveredSide === 'store' ? 'brightness(0.85) contrast(0.98)' : 'brightness(1) contrast(1)'
                   }}
                 />
+                {/* 1. Base subtle dark veil: preserves authentic illustration colors without bleaching */}
                 <div
                   style={{
                     position: 'absolute',
                     inset: 0,
-                    background: 'linear-gradient(to bottom, rgba(250,247,242,0.45) 0%, rgba(250,247,242,0.68) 50%, rgba(245,240,232,0.85) 100%)',
+                    background: 'linear-gradient(to bottom, rgba(12, 10, 8, 0.38) 0%, rgba(8, 7, 6, 0.22) 50%, rgba(8, 7, 6, 0.42) 100%)',
+                    pointerEvents: 'none'
+                  }}
+                />
+                {/* 2. Reinforced center vignette: deeper darkening behind the text block while keeping outer edges vivid */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(6, 5, 4, 0.72) 0%, rgba(6, 5, 4, 0.46) 45%, rgba(6, 5, 4, 0.08) 80%, transparent 100%)',
                     pointerEvents: 'none'
                   }}
                 />
@@ -272,10 +282,10 @@ export const Home: React.FC = () => {
                 style={{
                   position: 'absolute',
                   inset: 0,
-                  background: 'radial-gradient(ellipse at 50% 45%, #FAF7F2 0%, #EFE8DD 55%, #E2D8C6 100%)',
+                  background: 'radial-gradient(ellipse at 50% 45%, #181512 0%, #0f0d0b 55%, #080706 100%)',
                   zIndex: 1,
                   transition: 'filter 0.5s ease',
-                  filter: hoveredSide === 'store' ? 'brightness(0.9)' : 'brightness(1)'
+                  filter: hoveredSide === 'store' ? 'brightness(0.85)' : 'brightness(1)'
                 }}
               >
                 {/* Elegant subtle gallery architectural frame */}
@@ -292,7 +302,7 @@ export const Home: React.FC = () => {
                   style={{
                     position: 'absolute',
                     inset: 0,
-                    background: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.7) 0%, transparent 65%)',
+                    background: 'radial-gradient(circle at 50% 50%, rgba(197,160,89,0.06) 0%, transparent 65%)',
                     pointerEvents: 'none'
                   }}
                 />
@@ -316,11 +326,11 @@ export const Home: React.FC = () => {
                   fontFamily: 'var(--font-sans)',
                   fontSize: '11px',
                   letterSpacing: '0.35em',
-                  color: '#3e352b',
+                  color: '#F3D89D',
                   textTransform: 'uppercase',
                   marginBottom: '0.75rem',
                   fontWeight: 600,
-                  textShadow: '0 1px 2px rgba(255,255,255,0.6)'
+                  textShadow: '0 1px 8px rgba(0,0,0,0.95)'
                 }}
               >
                 {portfolioTag}
@@ -330,34 +340,35 @@ export const Home: React.FC = () => {
                   fontFamily: 'var(--font-serif)',
                   fontSize: '3.75rem',
                   letterSpacing: '0.12em',
-                  color: '#1a1510',
+                  color: '#ffffff',
                   textTransform: 'uppercase',
                   marginBottom: '0.25rem',
                   fontWeight: 500,
-                  textShadow: '0 1px 3px rgba(255,255,255,0.4)'
+                  textShadow: '0 2px 14px rgba(0,0,0,0.95), 0 0 24px rgba(0,0,0,0.8)'
                 }}
               >
                 {portfolioTitle}
               </h2>
-              <div className="star-ornament"><span className="star-symbol">✦</span></div>
+              <div className="star-ornament"><span className="star-symbol" style={{ color: '#C5A059' }}>✦</span></div>
               <p
                 style={{
                   fontFamily: 'var(--font-sans)',
                   fontSize: '10px',
                   letterSpacing: '0.25em',
-                  color: '#3a3025',
+                  color: '#e0c896',
                   textTransform: 'uppercase',
                   lineHeight: 2,
                   marginBottom: '2.5rem',
                   fontWeight: 600,
+                  textShadow: '0 1px 8px rgba(0,0,0,0.95)',
                   whiteSpace: 'pre-line'
                 }}
               >
                 {portfolioDesc}
               </p>
-              <Link to="/portfolio" className="btn-home-entry">
+              <Link to="/portfolio" className="btn-home-entry-dark">
                 <span>ENTRAR</span>
-                <span style={{ fontSize: '13px', color: '#9A7B42' }}>→</span>
+                <span style={{ fontSize: '13px', color: '#D4AF65' }}>→</span>
               </Link>
             </div>
           </section>
@@ -396,14 +407,24 @@ export const Home: React.FC = () => {
                     objectFit: 'cover',
                     transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease',
                     transform: hoveredSide === 'store' ? 'scale(1.03)' : 'scale(1)',
-                    filter: hoveredSide === 'portfolio' ? 'brightness(0.65) contrast(0.95)' : 'brightness(1)'
+                    filter: hoveredSide === 'portfolio' ? 'brightness(0.85) contrast(0.98)' : 'brightness(1) contrast(1)'
                   }}
                 />
+                {/* 1. Base subtle dark veil: keeps illustration clearly visible without excessive darkness */}
                 <div
                   style={{
                     position: 'absolute',
                     inset: 0,
-                    background: 'linear-gradient(to bottom, rgba(14,12,10,0.55) 0%, rgba(10,8,7,0.72) 50%, rgba(6,5,4,0.85) 100%)',
+                    background: 'linear-gradient(to bottom, rgba(14, 12, 10, 0.32) 0%, rgba(10, 8, 7, 0.20) 50%, rgba(8, 6, 5, 0.38) 100%)',
+                    pointerEvents: 'none'
+                  }}
+                />
+                {/* 2. Reinforced center vignette: optimal contrast behind text while edges remain bright */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(8, 7, 6, 0.68) 0%, rgba(8, 7, 6, 0.42) 45%, rgba(8, 7, 6, 0.08) 80%, transparent 100%)',
                     pointerEvents: 'none'
                   }}
                 />
@@ -461,7 +482,7 @@ export const Home: React.FC = () => {
                   textTransform: 'uppercase',
                   marginBottom: '0.75rem',
                   fontWeight: 600,
-                  textShadow: '0 1px 6px rgba(0,0,0,0.9)'
+                  textShadow: '0 1px 8px rgba(0,0,0,0.95)'
                 }}
               >
                 {storeTag}
@@ -475,12 +496,12 @@ export const Home: React.FC = () => {
                   textTransform: 'uppercase',
                   marginBottom: '0.25rem',
                   fontWeight: 500,
-                  textShadow: '0 2px 10px rgba(0,0,0,0.9)'
+                  textShadow: '0 2px 14px rgba(0,0,0,0.95), 0 0 24px rgba(0,0,0,0.8)'
                 }}
               >
                 {storeTitle}
               </h2>
-              <div className="star-ornament"><span className="star-symbol">✦</span></div>
+              <div className="star-ornament"><span className="star-symbol" style={{ color: '#C5A059' }}>✦</span></div>
               <p
                 style={{
                   fontFamily: 'var(--font-sans)',
@@ -491,7 +512,7 @@ export const Home: React.FC = () => {
                   lineHeight: 2,
                   marginBottom: '2.5rem',
                   fontWeight: 600,
-                  textShadow: '0 1px 6px rgba(0,0,0,0.9)',
+                  textShadow: '0 1px 8px rgba(0,0,0,0.95)',
                   whiteSpace: 'pre-line'
                 }}
               >
