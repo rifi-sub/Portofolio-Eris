@@ -25,20 +25,29 @@ export const Portfolio: React.FC = () => {
 
   // Extraer categorías únicas disponibles
   const categories = useMemo(() => {
-    const defaultCategories = ['Todos', 'Editorial', 'Personajes', 'Entornos', 'Retratos', 'Mascotas', 'Personal'];
-    const customCategories = new Set<string>();
+    const defaultCategories = ['Editorial', 'Personajes', 'Entornos', 'Retratos', 'Mascotas', 'Personal'];
+    const presentCategories = new Set<string>();
 
     artworks.forEach((art) => {
-      if (art.category) customCategories.add(art.category);
+      if (art.category && art.category.trim()) {
+        presentCategories.add(art.category.trim());
+      }
     });
 
-    const combined = ['Todos'];
-    defaultCategories.slice(1).forEach((cat) => combined.push(cat));
-    customCategories.forEach((cat) => {
-      if (!combined.includes(cat)) combined.push(cat);
-    });
+    if (presentCategories.size === 0) {
+      return ['Todos', ...defaultCategories];
+    }
 
-    return combined;
+    const ordered: string[] = [];
+    defaultCategories.forEach((cat) => {
+      if (presentCategories.has(cat)) {
+        ordered.push(cat);
+        presentCategories.delete(cat);
+      }
+    });
+    presentCategories.forEach((cat) => ordered.push(cat));
+
+    return ['Todos', ...ordered];
   }, [artworks]);
 
   // Filtrado de obras

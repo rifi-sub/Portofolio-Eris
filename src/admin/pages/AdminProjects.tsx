@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Plus, Edit2, Trash2, Image as ImageIcon, X, Save } from 'lucide-react';
 import { portfolioApi } from '../../services/portfolioApi';
 import { adminApi, getMediaUrl } from '../services/adminApi';
@@ -13,8 +13,23 @@ export const AdminProjects: React.FC = () => {
   const [showMediaPicker, setShowMediaPicker] = useState(false);
   const [mediaTargetField, setMediaTargetField] = useState<'cover' | 'gallery'>('cover');
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [isCustomCategory, setIsCustomCategory] = useState(false);
+  const [customCategoryInput, setCustomCategoryInput] = useState('');
 
   const presetCategories = ['Editorial', 'Personajes', 'Entornos', 'Retratos', 'Mascotas', 'Personal'];
+
+  const allCategories = useMemo(() => {
+    const set = new Set<string>(presetCategories);
+    projects.forEach((p) => {
+      if (p.category && p.category.trim()) {
+        set.add(p.category.trim());
+      }
+    });
+    if (editingProject?.category && editingProject.category.trim() && !isCustomCategory) {
+      set.add(editingProject.category.trim());
+    }
+    return Array.from(set);
+  }, [projects, editingProject?.category, isCustomCategory]);
 
   const fetchProjects = async () => {
     setLoading(true);
@@ -52,11 +67,15 @@ export const AdminProjects: React.FC = () => {
       gallery: [],
       software: ['Procreate', 'Photoshop']
     });
+    setIsCustomCategory(false);
+    setCustomCategoryInput('');
     setIsModalOpen(true);
   };
 
   const handleOpenEdit = (proj: Project) => {
     setEditingProject({ ...proj });
+    setIsCustomCategory(false);
+    setCustomCategoryInput('');
     setIsModalOpen(true);
   };
 
@@ -86,8 +105,10 @@ export const AdminProjects: React.FC = () => {
       ? editingProject.order
       : parseInt(String(editingProject.order || '1'), 10) || 1;
 
+    const category = (editingProject.category || 'Editorial').trim();
+
     try {
-      const payload = { ...editingProject, slug: cleanSlug, order };
+      const payload = { ...editingProject, slug: cleanSlug, order, category };
       if (editingProject.id) {
         await adminApi.updateProject(editingProject.id, payload);
       } else {
@@ -295,19 +316,69 @@ export const AdminProjects: React.FC = () => {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', color: '#C5A059', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem' }}>CATEGORÍA DE LA GALERÍA</label>
-                  <select
-                    value={editingProject.category || 'Editorial'}
-                    onChange={(e) => setEditingProject({ ...editingProject, category: e.target.value })}
-                    style={{ width: '100%', padding: '0.75rem', backgroundColor: '#090807', border: '1px solid rgba(197,160,89,0.3)', borderRadius: '6px', color: '#fff', outline: 'none', boxSizing: 'border-box' }}
-                  >
-                    {presetCategories.map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                    {editingProject.category && !presetCategories.includes(editingProject.category) && (
-                      <option value={editingProject.category}>{editingProject.category}</option>
-                    )}
-                  </select>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                    <label style={{ display: 'block', color: '#C5A059', fontSize: '0.8rem', fontWeight: 600 }}>
+                      CATEGORÍA DE LA GALERÍA
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (isCustomCategory) {
+                          setIsCustomCategory(false);
+                          setEditingProject({ ...editingProject, category: allCategories[0] || 'Editorial' });
+                        } else {
+                          setIsCustomCategory(true);
+                          setCustomCategoryInput('');
+                        }
+                      }}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#D4AF65',
+                        fontSize: '0.75rem',
+                        cursor: 'pointer',
+                        padding: 0,
+                        textDecoration: 'underline'
+                      }}
+                    >
+                      {isCustomCategory ? '← Elegir existente' : '+ Nueva categoría'}
+                    </button>
+                  </div>
+
+                  {isCustomCategory ? (
+                    <input
+                      type="text"
+                      required
+                      placeholder="Escribe la categoría (ej: Portadas, Concept Art...)"
+                      value={customCategoryInput}
+                      onChange={(e) => {
+                        setCustomCategoryInput(e.target.value);
+                        setEditingProject({ ...editingProject, category: e.target.value });
+                      }}
+                      autoFocus
+                      style={{ width: '100%', padding: '0.75rem', backgroundColor: '#090807', border: '1px solid rgba(197,160,89,0.5)', borderRadius: '6px', color: '#fff', outline: 'none', boxSizing: 'border-box' }}
+                    />
+                  ) : (
+                    <select
+                      value={editingProject.category || 'Editorial'}
+                      onChange={(e) => {
+                        if (e.target.value === '__NEW__') {
+                          setIsCustomCategory(true);
+                          setCustomCategoryInput('');
+                        } else {
+                          setEditingProject({ ...editingProject, category: e.target.value });
+                        }
+                      }}
+                      style={{ width: '100%', padding: '0.75rem', backgroundColor: '#090807', border: '1px solid rgba(197,160,89,0.3)', borderRadius: '6px', color: '#fff', outline: 'none', boxSizing: 'border-box' }}
+                    >
+                      {allCategories.map((cat) => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                      <option value="__NEW__" style={{ color: '#D4AF65', fontWeight: 600 }}>
+                        + Añadir nueva categoría...
+                      </option>
+                    </select>
+                  )}
                 </div>
                 <div>
                   <label style={{ display: 'block', color: '#C5A059', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.4rem' }}>ORDEN EN PORTFOLIO</label>
